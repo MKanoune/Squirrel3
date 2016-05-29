@@ -9,9 +9,6 @@ import java.lang.reflect.Proxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by schwub on 28.05.16.
- */
 public class ControllerContextProxy implements InvocationHandler {
     private Object target;
 
