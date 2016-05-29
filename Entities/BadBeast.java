@@ -1,7 +1,6 @@
 package Entities;
 
 import Core.Board.EntityContext;
-import Help.MoveCommand;
 import Help.XY;
 
 public class BadBeast extends Entity {
@@ -12,7 +11,7 @@ public class BadBeast extends Entity {
 	public BadBeast(int id, XY xy) {
 		super(id, energy, xy);
 		setTimeOut(3);
-		token = 'B';
+		
 	}
 	
 	@Override
@@ -26,7 +25,7 @@ public class BadBeast extends Entity {
     	if(Enemy !=null){
     		context.tryMove(this, this.xy.attack(this.xy,Enemy.xy));
     	}else{
-    		context.tryMove(this, xy.RandomMoveCommand());
+    		context.tryMove(this, XY.RandomMoveCommand());
     	}
     	setTimeOut(2);
     }
