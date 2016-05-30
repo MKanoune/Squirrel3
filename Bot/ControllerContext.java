@@ -26,7 +26,6 @@ public interface ControllerContext {
 	
 	//public default void implode();
 	
-	//public Entity nearestEntity();
 	
 	
 }

@@ -91,38 +91,34 @@ public class MiniSquirrelBot extends Squirrel {
 		
 		@Override
 		public XY getViewLowerLeft() {
-			XY lL = new XY(xy.getX()-viewXY.getX(),xy.getY()+viewXY.getY());
-			return lL;
+			XY pos = xy;
+			int x = pos.getX()-((viewXY.getX()-1)/2);
+			if(x < 0){x = 0;}
+			int y = pos.getY()+((viewXY.getY()-1)/2);
+			if(y > context.getSize().getY()){y = context.getSize().getY();}
+			XY xy = new XY(x,y);
+			return xy;
 			
-			
-//			XY pos = xy;
-//			int x = pos.getX()-((viewXY.getX()-1)/2);
-//			if(x < 0){x = 0;}
-//			int y = pos.getY()+((viewXY.getY()-1)/2);
-//			if(y > context.getSize().getY()){y = context.getSize().getY();}
-//			XY xy = new XY(x,y);
-//			return xy;
-			
+//			XY lL = new XY(xy.getX()-viewXY.getX(),xy.getY()+viewXY.getY());
+//			return lL;
+//			
 			
 		}
 
 		@Override
 		public XY getViewUpperRight() {
-			XY uR = new XY(xy.getX()+viewXY.getX(),xy.getY()-viewXY.getY());
-			return uR;
+			XY pos = xy;
+			int x = pos.getX()+((viewXY.getX()-1)/2);
+			if(x > context.getSize().getX()){
+				x = context.getSize().getX();
+			}
+			int y = pos.getY()-((viewXY.getY()-1)/2);
+			if(y <0){y=0;}
+			XY xy = new XY(x,y);
+			return xy;
 			
-			
-			
-			
-//			XY pos = xy;
-//			int x = pos.getX()+((viewXY.getX()-1)/2);
-//			if(x > context.getSize().getX()){
-//				x = context.getSize().getX();
-//			}
-//			int y = pos.getY()-((viewXY.getY()-1)/2);
-//			if(y <0){y=0;}
-//			XY xy = new XY(x,y);
-//			return xy;
+//			XY uR = new XY(xy.getX()+viewXY.getX(),xy.getY()-viewXY.getY());
+//			return uR;
 		}
 
 
@@ -254,6 +250,13 @@ public class MiniSquirrelBot extends Squirrel {
 		public XY getPosition() {
 			return xy;
 		}
+		
+		
+		
+		
+		
+		
+		
 
 //		@Override
 //		public Entity nearestEnemy() {
