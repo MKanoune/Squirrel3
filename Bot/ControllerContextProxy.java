@@ -1,8 +1,5 @@
 package Bot;
 
-import Main.Launcher;
-
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -12,14 +9,15 @@ import java.util.logging.Logger;
 public class ControllerContextProxy implements InvocationHandler {
     private Object target;
 
-    public static Logger logger = Logger.getLogger(Launcher.class.getName());
+    public static Logger logger = Logger.getLogger(ControllerContextProxy.class.getName());
 
 
-    public ControllerContextProxy (Object target)
-    {
+    public ControllerContextProxy (Object target){
         this.target = target;
         logger.info("ControllerContextProxy init");
     }
+    
+    
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result;
@@ -29,13 +27,12 @@ public class ControllerContextProxy implements InvocationHandler {
 
         if((t2-t1 >= 0))
         {
-            logger.log(Level.INFO, "It takes " + (t2 - t1) + " nanoseconds to invoke " + method.getName());
+            logger.log(Level.INFO, "It takes " + (t2 - t1) + " ns " + method.getName());
         }
         return result;
     }
 
-    public static Object newInstance (Object target)
-    {
+    public static Object newInstance (Object target){
         ClassLoader loader = target.getClass().getClassLoader();
         Class[] classes = target.getClass().getInterfaces();
         return Proxy.newProxyInstance(loader, classes, new ControllerContextProxy(target));

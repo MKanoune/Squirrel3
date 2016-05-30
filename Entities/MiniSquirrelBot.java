@@ -4,19 +4,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import Bot.BotController;
-import Bot.BotControllerFactory;
-import Bot.ControllerContext;
+import Bot.ControllerContextWImplode;
 import Bot.ControllerFactory;
 import Bot.miniBotController;
 import Core.Board.EntityContext;
 import Help.EntityType;
 import Help.XY;
-import Main.Launcher;
+
 
 public class MiniSquirrelBot extends Squirrel {
 	BotController controller;
 	MasterSquirrel master;
 	private int moveCount;
+	private int counter =0;
 	
 	
 	
@@ -32,13 +32,21 @@ public class MiniSquirrelBot extends Squirrel {
 
 	@Override
 	public void nextStep(EntityContext context) {
+		System.out.println("Bot: "+xy.toString());
 	 	this.updateEnergy(-1);
 	   	 if(timeOut > 0){
 	        	updateTimeOut();
 	        	return;
 	     }
 	   	ControllerContextImplMini view = this.new ControllerContextImplMini(context);
+	   	counter++;
+		System.out.println("Counter: "+counter);
+		if(counter >=50){
+			view.implodeI();
+		}
+	   	
 		controller.nextStep(view);
+		
 		
 	}
 	
@@ -68,10 +76,10 @@ public class MiniSquirrelBot extends Squirrel {
 	
 /*InnerClass ControllerContextImplMini*/
 	
-	public class ControllerContextImplMini implements ControllerContext {
+	public class ControllerContextImplMini implements ControllerContextWImplode {
 		public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
 		EntityContext context;
-		public XY viewXY = new XY (11,11);
+		private final XY viewXY = new XY (10,10);
 //		private Entity [][] view; 
 		
 		
@@ -79,45 +87,44 @@ public class MiniSquirrelBot extends Squirrel {
 			this.context = context;
 		}
 		
-//		public void view(){
-//			view = new Entity[getViewLowerLeft().getY()-getViewUpperRight().getY()][getViewUpperRight().getX()-getViewLowerLeft().getX()];
-//			int xCord = getViewLowerLeft().getX();
-//			int yCord = getViewUpperRight().getY();
-//			for(int x = 0; x < view[0].length; x++){
-//				for(int y = 0; y < view.length; y++){
-//					view[y][x] = getEntityAt(xCord,yCord);
-//						yCord++;
-//				}
-//				 yCord = getViewUpperRight().getY();
-//					xCord++;
-//			}
-//		}
+
 		
 		@Override
 		public XY getViewLowerLeft() {
-			XY pos = xy;
-			int x = pos.getX()-((viewXY.getX()-1)/2);
-			if(x < 0){x = 0;}
-			int y = pos.getY()+((viewXY.getY()-1)/2);
-			if(y > context.getSize().getY()){y = context.getSize().getY();}
-			XY xy = new XY(x,y);
-			return xy;
+			XY lL = new XY(xy.getX()-viewXY.getX(),xy.getY()+viewXY.getY());
+			return lL;
+			
+			
+//			XY pos = xy;
+//			int x = pos.getX()-((viewXY.getX()-1)/2);
+//			if(x < 0){x = 0;}
+//			int y = pos.getY()+((viewXY.getY()-1)/2);
+//			if(y > context.getSize().getY()){y = context.getSize().getY();}
+//			XY xy = new XY(x,y);
+//			return xy;
 			
 			
 		}
 
 		@Override
 		public XY getViewUpperRight() {
-			XY pos = xy;
-			int x = pos.getX()+((viewXY.getX()-1)/2);
-			if(x > context.getSize().getX()){
-				x = context.getSize().getX();
-			}
-			int y = pos.getY()-((viewXY.getY()-1)/2);
-			if(y <0){y=0;}
-			XY xy = new XY(x,y);
-			return xy;
+			XY uR = new XY(xy.getX()+viewXY.getX(),xy.getY()-viewXY.getY());
+			return uR;
+			
+			
+			
+			
+//			XY pos = xy;
+//			int x = pos.getX()+((viewXY.getX()-1)/2);
+//			if(x > context.getSize().getX()){
+//				x = context.getSize().getX();
+//			}
+//			int y = pos.getY()-((viewXY.getY()-1)/2);
+//			if(y <0){y=0;}
+//			XY xy = new XY(x,y);
+//			return xy;
 		}
+
 
 		@Override
 		public Entity getEntityAt(int x, int y) {
@@ -130,6 +137,9 @@ public class MiniSquirrelBot extends Squirrel {
 
 		@Override
 		public EntityType getEntityTypeAt(int x, int y) {
+			if(x < 0 || y < 0 || x > context.getSize().getX()|| y > context.getSize().getY()){
+				return EntityType.Null;
+			}
 			return context.getEntityType(x, y);
 		}
 
@@ -194,6 +204,55 @@ public class MiniSquirrelBot extends Squirrel {
 			}
 			logger.log(Level.INFO, "--------EXPLOSION-------"+"\nMasterEnergy after: "+ String.valueOf(getMaster().getEnergy()));
 			context.kill(MiniSquirrelBot.this);
+		}
+
+		@Override
+		public void implodeI() {
+			logger.log(Level.INFO,"--------IMPLODE---------\nMasterEnergy before: "+String.valueOf(getMaster().getEnergy()));
+			logger.log(Level.INFO, "SquirrelPos: "+xy.toString());
+			int impactRadius = 5;
+			int impactArea = (int) (impactRadius * impactRadius * Math.PI);
+			
+			for(int y = getViewUpperRight().getY(); y < getViewLowerLeft().getY(); y++){
+				for(int x = getViewLowerLeft().getX(); x < getViewUpperRight().getX(); x++){
+					Entity e = getEntityAt(x, y);
+					//EntityType type = getEntityTypeAt(x, y);
+					if(e!= null && !(e instanceof Wall) &&  e!=(getMaster()) && e!=MiniSquirrelBot.this){
+						logger.log(Level.INFO, "Entity: "+e.xy.toString()+" Entity-Energy: "+e.getEnergy());
+						int distance = (int)XY.vectorMagnitude(e.xy,xy);
+						int energyloss = (-200) * (getEnergy()/impactArea) * (1 - distance /impactRadius);
+						if(energyloss <=0){
+							energyloss*=-1;
+						}
+						logger.log(Level.INFO,"energyloss: "+energyloss);
+						if(e instanceof BadBeast || e instanceof BadPlant){
+							if(e.getEnergy()+energyloss >=0){
+								getMaster().updateEnergy(e.getEnergy()*-1);
+								context.killAndReplace(e);
+							}else{
+								e.updateEnergy(energyloss);
+							}
+						}else if(e instanceof GoodBeast || e instanceof GoodPlant){
+							if(e.getEnergy()-energyloss <=0){
+								getMaster().updateEnergy(e.getEnergy());
+								context.killAndReplace(e);
+							}else{
+								e.updateEnergy(energyloss*-1);
+							}
+						}
+					}
+				}
+			}
+			logger.log(Level.INFO, "--------EXPLOSION-------"+"\nMasterEnergy after: "+ String.valueOf(getMaster().getEnergy()));
+			context.kill(MiniSquirrelBot.this);
+			
+		}
+
+
+
+		@Override
+		public XY getPosition() {
+			return xy;
 		}
 
 //		@Override
@@ -291,7 +350,19 @@ public class MiniSquirrelBot extends Squirrel {
 //			return next;
 //		}
 
-		
+//		public void view(){
+//		view = new Entity[getViewLowerLeft().getY()-getViewUpperRight().getY()][getViewUpperRight().getX()-getViewLowerLeft().getX()];
+//		int xCord = getViewLowerLeft().getX();
+//		int yCord = getViewUpperRight().getY();
+//		for(int x = 0; x < view[0].length; x++){
+//			for(int y = 0; y < view.length; y++){
+//				view[y][x] = getEntityAt(xCord,yCord);
+//					yCord++;
+//			}
+//			 yCord = getViewUpperRight().getY();
+//				xCord++;
+//		}
+//	}
 	
 	
 	}	

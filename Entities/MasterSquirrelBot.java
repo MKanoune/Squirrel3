@@ -121,6 +121,11 @@ public class MasterSquirrelBot extends MasterSquirrel {
 			XY xy = new XY(x,y);
 			return xy;
 		}
+
+		@Override
+		public XY getPosition() {
+			return MasterSquirrelBot.this.xy;
+		}
 		
 
 		

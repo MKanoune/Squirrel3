@@ -10,5 +10,7 @@ public interface BoardView {
 	public Entity getEntityAt(int x, int y);
 	
 	public XY getSize();
+	
+	public int getEnergy(int x, int y);
 
 }

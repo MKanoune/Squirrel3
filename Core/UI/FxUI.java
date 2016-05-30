@@ -30,7 +30,7 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.Scene;
 
 public class FxUI extends Scene implements UI {
-	private static final int CELL_SIZE =25;
+	private static final int CELL_SIZE =26;
 	private static BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
 	static Command command;
 	static Command lastCommand;
@@ -56,8 +56,11 @@ public class FxUI extends Scene implements UI {
 	        top.getChildren().add(button);
 	        top.getChildren().add(boardCanvas);
 	        top.getChildren().add(statusLabel);
+	        top.getChildren().add(energyLabel);
 	        statusLabel.setText("hello world!");
-	      
+	       // energyLabel.setText("Energy: ");
+	        
+	        
 	        final FxUI fxUI = new FxUI(top, boardCanvas, statusLabel); 
 	        
 	        button.setOnAction(new EventHandler<ActionEvent>(){
@@ -117,13 +120,16 @@ public class FxUI extends Scene implements UI {
         int yCord = 0;
         for(int x = 0; x < viewSize.getX(); x++){
         	for(int y = 0; y < viewSize.getY(); y++){
-        		Entity e = view.getEntityAt(x, y);
         		EntityType type = view.getEntityType(x, y);
         		gc.setFill(Color.BURLYWOOD);
     			gc.fillRect(xCord, yCord, CELL_SIZE, CELL_SIZE);
     			if(type.paintType.equals("oval")){
     				gc.setFill(type.color);
     				gc.fillOval(xCord, yCord, CELL_SIZE, CELL_SIZE);
+    				if(type == EntityType.GuidedMasterSquirrel){
+    					gc.setFill(Color.WHITE);
+    					gc.fillText(String.valueOf(view.getEnergy(x, y)) ,x*CELL_SIZE, (y*CELL_SIZE)+CELL_SIZE/1.5, CELL_SIZE);
+    				}
     			}else if(type.paintType.equals("rect")){
     				gc.setFill(type.color);
     				gc.fillRect(xCord, yCord, CELL_SIZE, CELL_SIZE);

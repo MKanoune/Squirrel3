@@ -22,7 +22,9 @@ public interface ControllerContext {
 	
 	public int getEnergy();
 	
-	//public void implode();
+	public XY getPosition();
+	
+	//public default void implode();
 	
 	//public Entity nearestEntity();
 	

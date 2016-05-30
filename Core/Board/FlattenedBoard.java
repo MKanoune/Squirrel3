@@ -369,6 +369,12 @@ public class FlattenedBoard implements BoardView, EntityContext {
 		MiniSquirrelBot mini = parent.createSlave(board.getNewID(), energy, direction);
 		board.insert(mini);
 	}
+
+
+	@Override
+	public int getEnergy(int x,int y) {
+		return cells[y][x].getEnergy();
+	}
 	
 
 	

@@ -7,26 +7,36 @@ import Help.XY;
 
 public class miniBotController implements BotController {
 	private XY lastMove;
-	private int counter = 0;
+
 	
 	public miniBotController(){
 		this.lastMove = XY.RandomMoveCommand();
 	}
 	
 	@Override
-	public void nextStep(ControllerContext view) {
-		view = (ControllerContext) ControllerContextProxy.newInstance(view);
-		counter++;
-		System.out.println("Counter: "+counter);
+	public void nextStep(ControllerContext view){
+		view = (ControllerContextWImplode) ControllerContextProxy.newInstance(view);
 		view.move(XY.RandomMoveCommand());
-		//XY pos = new XY(view.getViewLowerLeft().getX())
-		EntityType next = null;
+		final int viewMax = 10;
+		XY pos = new XY((view.getViewUpperRight().getX() - viewMax ),(view.getViewLowerLeft().getY()-viewMax));
+		System.out.println("Controller: "+pos.toString());
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		/*EntityType next = null;
 		for(int y = view.getViewUpperRight().getY(); y < view.getViewLowerLeft().getY(); y++){
 			for(int x = view.getViewLowerLeft().getX(); x < view.getViewUpperRight().getX(); x++){
 				EntityType victim = view.getEntityTypeAt(x, y);
 				if(victim != null && victim != EntityType.Wall&& victim != EntityType.MasterSquirrelBot){// && victim!=EntityType.BadPlant 
 					if(next != null){
-						//if(XY.vectorValue2(new XY(x,y), ))
+						
 						
 					}else{
 						next = victim;
@@ -37,7 +47,7 @@ public class miniBotController implements BotController {
 				
 			}
 		}
-		
+		*/
 	/*	Entity target = null;//view.nearestEntity();
 		System.out.println("mini "+ bot.toString());
 		if(target instanceof BadBeast){
@@ -98,4 +108,6 @@ public class miniBotController implements BotController {
 //			view.move(XY.RandomMoveCommand());
 //		}
 	}
+
+	
 }
