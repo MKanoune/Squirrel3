@@ -34,5 +34,5 @@ public interface EntityContext {
 	
 	public Entity getEntity(int x, int y);
 	
-	//public EntityType(XY xy);
+	public void implode(MiniSquirrelBot bot);
 }

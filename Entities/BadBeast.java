@@ -43,19 +43,6 @@ public class BadBeast extends Entity {
 		return new BadBeast(ID,pos);
 	}
     
-    //public XY attack(){
     
-//    public MoveCommand attack(MasterSquirrel sq){
-//    	MoveCommand move = null;
-//    	if(sq.XY.getX() == this.XY.getX()&& sq.XY.getY() > this.XY.getY())move = MoveCommand.Down;
-//    	if(sq.XY.getX() == this.XY.getX()&& sq.XY.getY() < this.XY.getY())move = MoveCommand.Up;
-//    	if(sq.XY.getX() >  this.XY.getX()&& sq.XY.getY() == this.XY.getY())move = MoveCommand.Right;
-//    	if(sq.XY.getX() < this.XY.getX()&& sq.XY.getY() == this.XY.getY())move = MoveCommand.Left;
-//    	if(sq.XY.getX() > this.XY.getX()&& sq.XY.getY() > this.XY.getY())move = MoveCommand.DownRight;
-//    	if(sq.XY.getX() < this.XY.getX()&& sq.XY.getY() > this.XY.getY())move = MoveCommand.DownLeft;
-//    	if(sq.XY.getX() > this.XY.getX()&& sq.XY.getY() < this.XY.getY())move = MoveCommand.UpRight;
-//    	if(sq.XY.getX() < this.XY.getX()&& sq.XY.getY() < this.XY.getY())move = MoveCommand.UpLeft;
-//    	return move;
-//    	
-//    }
+
 }

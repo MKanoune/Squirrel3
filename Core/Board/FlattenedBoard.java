@@ -1,5 +1,7 @@
 package Core.Board;
 
+import java.util.logging.Level;
+
 import Entities.BadBeast;
 import Entities.BadPlant;
 import Entities.Entity;
@@ -374,6 +376,56 @@ public class FlattenedBoard implements BoardView, EntityContext {
 	@Override
 	public int getEnergy(int x,int y) {
 		return cells[y][x].getEnergy();
+	}
+
+
+	@Override
+	public void implode(MiniSquirrelBot bot) {
+		int impactRadius = 5;
+		int impactArea = (int) (impactRadius * impactRadius * Math.PI);
+		int yStart = bot.xy.getY()-impactRadius;
+		if(yStart < 0){yStart = 0;}
+		int yEnd = bot.xy.getY()+impactRadius;
+		if(yEnd > board.getSize().getY()){
+			yEnd = board.getSize().getY();
+		}
+		//X Values
+		int xStart = bot.xy.getX()-impactRadius;
+		if(xStart < 0){xStart = 0;}
+		int xEnd = bot.xy.getX()+impactRadius;
+		if(xEnd > board.getSize().getX()){
+			xEnd = board.getSize().getX();
+		}
+		
+		for(int y = yStart; y <= yEnd; y++){
+			for(int x = xStart; x <= xEnd; x++){
+				Entity e = getEntityAt(x, y);
+				if(e!= null && !(e instanceof Wall) &&  e!=(bot.getMaster()) && e!= bot){
+					int distance = (int)XY.vectorMagnitude(e.xy,bot.xy);
+					int energyloss = (-200) * (bot.getEnergy()/impactArea) * (1 - distance /impactRadius);
+					if(energyloss <=0){
+						energyloss*=-1;
+					}
+					if(e instanceof BadBeast || e instanceof BadPlant){
+						if(e.getEnergy()+energyloss >=0){
+							bot.getMaster().updateEnergy(e.getEnergy()*-1);
+							killAndReplace(e);
+						}else{
+							e.updateEnergy(energyloss);
+						}
+					}else if(e instanceof GoodBeast || e instanceof GoodPlant){
+						if(e.getEnergy()-energyloss <=0){
+							bot.getMaster().updateEnergy(e.getEnergy());
+							killAndReplace(e);
+						}else{
+							e.updateEnergy(energyloss*-1);
+						}
+					}
+				}
+			}
+		}
+		kill(bot);
+		
 	}
 	
 

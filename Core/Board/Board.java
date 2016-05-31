@@ -8,7 +8,6 @@ import Entities.BadPlant;
 import Entities.Entity;
 import Entities.GoodBeast;
 import Entities.GoodPlant;
-import Entities.MiniSquirrelBot;
 import Entities.Wall;
 import Help.XY;
 
@@ -95,8 +94,8 @@ public class Board {
 				for(int i = 0; i < config.playerCount;i++){
 					Class<?> cl = Class.forName(config.Bots[i]);
 					Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
-					Object o = constructor.newInstance(getNewID(),rndmPos(),config.energy[i]);
-					container.insert((Entity) o);
+					//Object o = constructor.newInstance(getNewID(),rndmPos(),config.energy[i]);
+					container.insert((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[i]));
 				}
 				
 			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

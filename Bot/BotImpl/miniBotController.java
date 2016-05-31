@@ -11,6 +11,7 @@ import Help.XY;
 
 public class miniBotController implements BotController {
 	private XY lastMove;
+	int counter = 0;
 
 	
 	public miniBotController(){
@@ -20,10 +21,20 @@ public class miniBotController implements BotController {
 	@Override
 	public void nextStep(ControllerContext view){
 		//view = (ControllerContextWImplode) ControllerContextProxy.newInstance(view);
+		counter++;
+		
+		if(counter > 50){
+			ControllerContextWImplode view1 = (ControllerContextWImplode)view;
+			view1.implodeI();
+			return;
+		}
 		view.move(XY.RandomMoveCommand());
-		final int viewMax = 10;
-		XY pos = new XY((view.getViewUpperRight().getX() - viewMax ),(view.getViewLowerLeft().getY()-viewMax));
-		System.out.println("Controller: "+pos.toString());
+		
+		
+		
+		
+		
+		
 		
 		
 		

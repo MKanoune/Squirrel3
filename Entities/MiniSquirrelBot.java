@@ -204,44 +204,7 @@ public class MiniSquirrelBot extends Squirrel {
 
 		@Override
 		public void implodeI() {
-			logger.log(Level.INFO,"--------IMPLODE---------\nMasterEnergy before: "+String.valueOf(getMaster().getEnergy()));
-			logger.log(Level.INFO, "SquirrelPos: "+xy.toString());
-			int impactRadius = 5;
-			int impactArea = (int) (impactRadius * impactRadius * Math.PI);
-			
-			for(int y = getViewUpperRight().getY(); y < getViewLowerLeft().getY(); y++){
-				for(int x = getViewLowerLeft().getX(); x < getViewUpperRight().getX(); x++){
-					Entity e = getEntityAt(x, y);
-					//EntityType type = getEntityTypeAt(x, y);
-					if(e!= null && !(e instanceof Wall) &&  e!=(getMaster()) && e!=MiniSquirrelBot.this){
-						logger.log(Level.INFO, "Entity: "+e.xy.toString()+" Entity-Energy: "+e.getEnergy());
-						int distance = (int)XY.vectorMagnitude(e.xy,xy);
-						int energyloss = (-200) * (getEnergy()/impactArea) * (1 - distance /impactRadius);
-						if(energyloss <=0){
-							energyloss*=-1;
-						}
-						logger.log(Level.INFO,"energyloss: "+energyloss);
-						if(e instanceof BadBeast || e instanceof BadPlant){
-							if(e.getEnergy()+energyloss >=0){
-								getMaster().updateEnergy(e.getEnergy()*-1);
-								context.killAndReplace(e);
-							}else{
-								e.updateEnergy(energyloss);
-							}
-						}else if(e instanceof GoodBeast || e instanceof GoodPlant){
-							if(e.getEnergy()-energyloss <=0){
-								getMaster().updateEnergy(e.getEnergy());
-								context.killAndReplace(e);
-							}else{
-								e.updateEnergy(energyloss*-1);
-							}
-						}
-					}
-				}
-			}
-			logger.log(Level.INFO, "--------EXPLOSION-------"+"\nMasterEnergy after: "+ String.valueOf(getMaster().getEnergy()));
-			context.kill(MiniSquirrelBot.this);
-			
+			context.implode(MiniSquirrelBot.this);
 		}
 
 
