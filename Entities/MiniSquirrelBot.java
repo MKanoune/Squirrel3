@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import Bot.BotController;
 import Bot.ControllerContextWImplode;
 import Bot.ControllerFactory;
-import Bot.miniBotController;
+import Bot.BotImpl.miniBotController;
 import Core.Board.EntityContext;
 import Help.EntityType;
 import Help.XY;
@@ -17,6 +17,7 @@ public class MiniSquirrelBot extends Squirrel {
 	MasterSquirrel master;
 	private int moveCount;
 	private int counter =0;
+	
 	
 	
 	
@@ -32,7 +33,6 @@ public class MiniSquirrelBot extends Squirrel {
 
 	@Override
 	public void nextStep(EntityContext context) {
-		System.out.println("Bot: "+xy.toString());
 	 	this.updateEnergy(-1);
 	   	 if(timeOut > 0){
 	        	updateTimeOut();

@@ -1,10 +1,14 @@
 package Core.Board;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import Entities.BadBeast;
 import Entities.BadPlant;
 import Entities.Entity;
 import Entities.GoodBeast;
 import Entities.GoodPlant;
+import Entities.MiniSquirrelBot;
 import Entities.Wall;
 import Help.XY;
 
@@ -59,7 +63,7 @@ public class Board {
 		container.insert(e);
 	}
 	
-	private void setStartEntitys(){
+	private void setStartEntitys() {
 			for(int x = 0; x < config.Size.getX(); x++){
 				container.insert(new Wall(getNewID(),new XY(x,0)));
 			}
@@ -86,6 +90,18 @@ public class Board {
         	}
 			for(int i = 0; i < config.wallCount2; i++){
 				container.insert(new Wall(getNewID(),rndmPos()));
+			}
+			try {
+				for(int i = 0; i < config.playerCount;i++){
+					Class<?> cl = Class.forName(config.Bots[i]);
+					Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
+					Object o = constructor.newInstance(getNewID(),rndmPos(),config.energy[i]);
+					container.insert((Entity) o);
+				}
+				
+			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				System.out.println("Class not found");
+				e.printStackTrace();
 			}
 	}
 

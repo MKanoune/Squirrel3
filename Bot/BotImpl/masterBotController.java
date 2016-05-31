@@ -1,5 +1,7 @@
-package Bot;
+package Bot.BotImpl;
 
+import Bot.BotController;
+import Bot.ControllerContext;
 import Entities.BadBeast;
 import Entities.BadPlant;
 import Entities.Entity;
@@ -21,6 +23,7 @@ public class masterBotController implements BotController {
 	
 	@Override
 	public void nextStep(ControllerContext view) {
+		view.move(XY.RandomMoveCommand());
 		//this.view = view;
 		/*Entity target =null;// view.nearestEntity()
 		if(target instanceof BadBeast){

@@ -1,6 +1,10 @@
-package Bot;
+package Bot.BotImpl;
 
 
+import Bot.BotController;
+import Bot.ControllerContext;
+import Bot.ControllerContextProxy;
+import Bot.ControllerContextWImplode;
 import Help.EntityType;
 import Help.XY;
 
@@ -15,7 +19,7 @@ public class miniBotController implements BotController {
 	
 	@Override
 	public void nextStep(ControllerContext view){
-		view = (ControllerContextWImplode) ControllerContextProxy.newInstance(view);
+		//view = (ControllerContextWImplode) ControllerContextProxy.newInstance(view);
 		view.move(XY.RandomMoveCommand());
 		final int viewMax = 10;
 		XY pos = new XY((view.getViewUpperRight().getX() - viewMax ),(view.getViewLowerLeft().getY()-viewMax));

@@ -69,15 +69,16 @@ public class GameImpl extends Game{
 //		
 		
 		try{
-			Class cl = Class.forName("Scanner.CommandTypeMethods");
+			Class<?> cl = Class.forName("Scanner.CommandTypeMethods");
 			Method method = cl.getDeclaredMethod(command.getCommandType().getName(), command.getCommandType().getParamTypes());
 			method.invoke(new CommandTypeMethods(master,board), params);
+			//method.invoke(obj, args)
 			
 			
 		}
 		catch (ClassNotFoundException e){System.out.println("err 1");}
 		catch (IllegalAccessException e){System.out.println("err 2");}
-		catch(NoSuchMethodException e){System.out.println("err 4");}
+		catch(NoSuchMethodException e){System.out.println("Method not Found");}
 		catch(InvocationTargetException e){System.out.println("err 4");}
 		catch(IllegalArgumentException e){System.out.println("err spawn");}
 		catch(NullPointerException e){System.out.println("try again");}

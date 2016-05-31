@@ -4,7 +4,7 @@ import Bot.BotController;
 import Bot.BotControllerFactory;
 import Bot.ControllerContext;
 import Bot.ControllerFactory;
-import Bot.masterBotController;
+import Bot.BotImpl.masterBotController;
 import Core.Board.Board;
 import Core.Board.EntityContext;
 import Help.EntityType;
@@ -15,6 +15,9 @@ public class MasterSquirrelBot extends MasterSquirrel {
 	BotController controller;
 	//BotControllerFactory factory;
 	private int moveCount;
+	
+	
+	
 	
 	public MasterSquirrelBot(int id, XY xy,int energy) {
 		super(id,energy, xy);

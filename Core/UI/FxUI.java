@@ -126,7 +126,7 @@ public class FxUI extends Scene implements UI {
     			if(type.paintType.equals("oval")){
     				gc.setFill(type.color);
     				gc.fillOval(xCord, yCord, CELL_SIZE, CELL_SIZE);
-    				if(type == EntityType.GuidedMasterSquirrel){
+    				if(type == EntityType.GuidedMasterSquirrel || type == EntityType.MasterSquirrelBot){
     					gc.setFill(Color.WHITE);
     					gc.fillText(String.valueOf(view.getEnergy(x, y)) ,x*CELL_SIZE, (y*CELL_SIZE)+CELL_SIZE/1.5, CELL_SIZE);
     				}
