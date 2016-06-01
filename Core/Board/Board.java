@@ -28,18 +28,18 @@ public class Board {
 	BoardConfig config;
 //	EntitySet container;
 	Map<String, Integer> Highscore;
-	Vector<Entity> vectorContainer; 
+	Vector<Entity> container; 
 	private static int recentID;
 	public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
 	
 	public Board(){
 		this.config = new BoardConfig();
 		//container = new EntitySet(config.Size);
-		vectorContainer = new Vector<Entity>();
+		container = new Vector<Entity>();
 		setStartEntities();
 		setBots();
-		for(int i =0; i < vectorContainer.size();i++){
-			System.out.println(vectorContainer.get(i));
+		for(int i =0; i < container.size();i++){
+			System.out.println(container.get(i));
 		}
 	}
 	
@@ -54,8 +54,8 @@ public class Board {
 //		for(int i=0;i<container.container.length;i++){
 //			if(container.container[i]!=null){
 //			container.container[i].nextStep(flatten());
-		for(int i = 0; i< vectorContainer.size();i++){
-			vectorContainer.get(i).nextStep(flatten());
+		for(int i = 0; i< container.size();i++){
+			container.get(i).nextStep(flatten());
 			if(config.duration == 0){
 				try {
 					Thread.sleep(10000);
@@ -79,72 +79,42 @@ public class Board {
 	 }
 	
 	public void delete(Entity e){
-		vectorContainer.remove(e);
+		container.remove(e);
 	}
 	
 	public void insert(Entity e){
-		vectorContainer.addElement(e);
+		container.addElement(e);
 	}
 	
-	private void setStartEntitys() {
-//			for(int x = 0; x < config.Size.getX(); x++){
-//				container.insert(new Wall(getNewID(),new XY(x,0)));
-//			}
-//			for(int x = 0; x < config.Size.getX(); x++){
-//				container.insert(new Wall(getNewID(),new XY(x,config.Size.getY()-1)));
-//			}
-//			for(int y = 1; y < config.Size.getY()-1; y++){
-//				container.insert(new Wall(getNewID(),new XY(0,y)));
-//			}
-//			for(int y = 1; y < config.Size.getY()-1; y++){
-//				container.insert(new Wall(getNewID(),new XY(config.Size.getX()-1,y)));
-//			}
-//			for (int i = 0; i < config.badPlantCount; i++){
-//				container.insert(new BadPlant(getNewID(),rndmPos()));
-//			}
-//			for (int i = 0; i < config.goodPlantCount; i++){
-//				container.insert(new GoodPlant(getNewID(),rndmPos()));
-//			}
-//			for (int i = 0; i < config.badBeastCount; i++){
-//				container.insert(new BadBeast(getNewID(),rndmPos()));
-//        	}
-//			for (int i = 0; i < config.goodBeastCount; i++){
-//				container.insert(new GoodBeast(getNewID(),rndmPos()));
-//        	}
-//			for(int i = 0; i < config.wallCount2; i++){
-//				container.insert(new Wall(getNewID(),rndmPos()));
-//			}
-//			
-	}
 
 	
 	private void setStartEntities(){
 		for(int x = 0; x < config.Size.getX(); x++){
-			vectorContainer.add(new Wall(getNewID(),new XY(x,0)));
+			container.add(new Wall(getNewID(),new XY(x,0)));
 		}
 		for(int x = 0; x < config.Size.getX(); x++){
-			vectorContainer.add(new Wall(getNewID(),new XY(x,config.Size.getY()-1)));
+			container.add(new Wall(getNewID(),new XY(x,config.Size.getY()-1)));
 		}
 		for(int y = 1; y < config.Size.getY()-1; y++){
-			vectorContainer.add(new Wall(getNewID(),new XY(0,y)));
+			container.add(new Wall(getNewID(),new XY(0,y)));
 		}
 		for(int y = 1; y < config.Size.getY()-1; y++){
-			vectorContainer.add(new Wall(getNewID(),new XY(config.Size.getX()-1,y)));
+			container.add(new Wall(getNewID(),new XY(config.Size.getX()-1,y)));
 		}
 		for (int i = 0; i < config.badPlantCount; i++){
-			vectorContainer.add(new BadPlant(getNewID(),rndmPos()));
+			container.add(new BadPlant(getNewID(),rndmPos()));
 		}
 		for (int i = 0; i < config.goodPlantCount; i++){
-			vectorContainer.add(new GoodPlant(getNewID(),rndmPos()));
+			container.add(new GoodPlant(getNewID(),rndmPos()));
 		}
 		for (int i = 0; i < config.badBeastCount; i++){
-			vectorContainer.add(new BadBeast(getNewID(),rndmPos()));
+			container.add(new BadBeast(getNewID(),rndmPos()));
     	}
 		for (int i = 0; i < config.goodBeastCount; i++){
-			vectorContainer.add(new GoodBeast(getNewID(),rndmPos()));
+			container.add(new GoodBeast(getNewID(),rndmPos()));
     	}
 		for(int i = 0; i < config.wallCount2; i++){
-			vectorContainer.add(new Wall(getNewID(),rndmPos()));
+			container.add(new Wall(getNewID(),rndmPos()));
 		}
 		
 	}
@@ -156,7 +126,7 @@ public class Board {
 			for(int i = 0; i < config.playerCount;i++){
 				Class<?> cl = Class.forName(config.Bots[i]);
 				Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
-				vectorContainer.addElement((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[i]));
+				container.addElement((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[i]));
 			}
 			
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -166,9 +136,9 @@ public class Board {
 	}
 
 	public void deleteStartEntitys(){
-		for(int i = vectorContainer.size()-1; i>=0;i--){
-			if(!(vectorContainer.get(i) instanceof MasterSquirrel))
-				vectorContainer.removeElementAt(i);
+		for(int i = container.size()-1; i>=0;i--){
+			if(!(container.get(i) instanceof MasterSquirrel))
+				container.removeElementAt(i);
 		}
 			
 	}
@@ -176,9 +146,9 @@ public class Board {
 
 	public void setHighScore(){
 		Highscore = new HashMap<>();
-		for(int i = 0; i<vectorContainer.size();i++){
-			if(vectorContainer.get(i) instanceof MasterSquirrel){
-				Highscore.put(vectorContainer.get(i).getClass().getName(), vectorContainer.get(i).getEnergy());
+		for(int i = 0; i<container.size();i++){
+			if(container.get(i) instanceof MasterSquirrel){
+				Highscore.put(container.get(i).getClass().getName(), container.get(i).getEnergy());
 			}
 		}
 	}
@@ -209,5 +179,39 @@ public class Board {
 		return (flatten().getEntityAt(pos.getX(), pos.getY())== null);
 	}
 	
+	
+	
+	
+//	private void setStartEntitys() {
+//	for(int x = 0; x < config.Size.getX(); x++){
+//		container.insert(new Wall(getNewID(),new XY(x,0)));
+//	}
+//	for(int x = 0; x < config.Size.getX(); x++){
+//		container.insert(new Wall(getNewID(),new XY(x,config.Size.getY()-1)));
+//	}
+//	for(int y = 1; y < config.Size.getY()-1; y++){
+//		container.insert(new Wall(getNewID(),new XY(0,y)));
+//	}
+//	for(int y = 1; y < config.Size.getY()-1; y++){
+//		container.insert(new Wall(getNewID(),new XY(config.Size.getX()-1,y)));
+//	}
+//	for (int i = 0; i < config.badPlantCount; i++){
+//		container.insert(new BadPlant(getNewID(),rndmPos()));
+//	}
+//	for (int i = 0; i < config.goodPlantCount; i++){
+//		container.insert(new GoodPlant(getNewID(),rndmPos()));
+//	}
+//	for (int i = 0; i < config.badBeastCount; i++){
+//		container.insert(new BadBeast(getNewID(),rndmPos()));
+//	}
+//	for (int i = 0; i < config.goodBeastCount; i++){
+//		container.insert(new GoodBeast(getNewID(),rndmPos()));
+//	}
+//	for(int i = 0; i < config.wallCount2; i++){
+//		container.insert(new Wall(getNewID(),rndmPos()));
+//	}
+//	
+//}
+
 
 }
