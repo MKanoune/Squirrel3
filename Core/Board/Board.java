@@ -3,7 +3,9 @@ package Core.Board;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.function.Predicate;
 
@@ -21,7 +23,8 @@ import Help.XY;
 
 public class Board {
 	BoardConfig config;
-	//EntitySet container;
+//	EntitySet container;
+	Map<String, Integer> Highscore;
 	Vector<Entity> vectorContainer; 
 	private static int recentID;
 	
@@ -52,11 +55,12 @@ public class Board {
 			if(config.duration == 0){
 				try {
 					Thread.sleep(10000);
-					config.duration = 50;
+					config.duration = config.standardDuration;
 					deleteStartEntitys();
+					setHighScore();
+					printHighScore();
 					setStartEntities();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -69,15 +73,6 @@ public class Board {
 		 String out = "Size: " + config.Size.getX()*config.Size.getY() + " Entitys: " + config.getEntityCount(); 
 		 return out;
 	 }
-	
-//	public void setNewEntity(Entity entity){
-//		for(int i =0; i< container.container.length; i++){
-//			if(container.container[i]== null){
-//				container.container[i]= entity;
-//				break;
-//			}
-//		}
-//	}
 	
 	public void delete(Entity e){
 		vectorContainer.remove(e);
@@ -174,6 +169,19 @@ public class Board {
 			
 	}
 	
+
+	public void setHighScore(){
+		Highscore = new HashMap<>();
+		for(int i = 0; i<vectorContainer.size();i++){
+			if(vectorContainer.get(i) instanceof MasterSquirrel){
+				Highscore.put(vectorContainer.get(i).getClass().getName(), vectorContainer.get(i).getEnergy());
+			}
+		}
+	}
+	
+	public void printHighScore(){
+		System.out.println(Highscore);
+	}
 	
 	public FlattenedBoard flatten(){
 		FlattenedBoard fb = new FlattenedBoard(this);

@@ -19,7 +19,8 @@ public class BoardConfig {
     public int [] energy = {Bot1Energy,Bot2Energy};
     public String []Bots = {Bot1,Bot2};
     public int playerCount = 2;
-    public int duration = 50;
+    public final int standardDuration = 500;
+    public int duration = standardDuration;
     
    
 	public int EntityCount(){
