@@ -1,9 +1,9 @@
 package Bot;
 
+import Bot.BotImpl.MasterSquirrelBot;
+import Bot.BotImpl.MiniSquirrelBot;
 import Bot.BotImpl.masterBotController;
 import Bot.BotImpl.miniBotController;
-import Entities.MasterSquirrelBot;
-import Entities.MiniSquirrelBot;
 
 public class ControllerFactory implements BotControllerFactory{
 

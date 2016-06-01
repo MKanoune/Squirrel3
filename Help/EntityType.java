@@ -1,5 +1,7 @@
 package Help;
 
+import Bot.BotImpl.MasterSquirrelBot;
+import Bot.BotImpl.MiniSquirrelBot;
 import Entities.*;
 import javafx.scene.paint.Color;
 

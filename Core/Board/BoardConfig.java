@@ -12,13 +12,14 @@ public class BoardConfig {
     public final int goodPlantCount = 5;
     public final int badPlantCount = 5;
     public final int wallCount2 = 0;
-    public String Bot1 = "Entities.MasterSquirrelBot";
+    public String Bot1 = "Bot.BotImpl.MasterSquirrelBot";
     public int Bot1Energy = 1000;
-    public String Bot2 = "Entities.MasterSquirrelBot";
+    public String Bot2 = "Bot.BotImpl.MasterSquirrelBot";
     public int Bot2Energy = 2000;
     public int [] energy = {Bot1Energy,Bot2Energy};
     public String []Bots = {Bot1,Bot2};
-    public int playerCount = 2;
+    public int botCount = 2;
+    public boolean playerMode = true;
     public final int standardDuration = 50;
     public int duration = standardDuration;
     

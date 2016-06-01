@@ -1,10 +1,10 @@
 package Core.Board;
 
+import Bot.BotImpl.MiniSquirrelBot;
 import Entities.BadBeast;
 import Entities.Entity;
 import Entities.GoodBeast;
 import Entities.MasterSquirrel;
-import Entities.MiniSquirrelBot;
 import Entities.Squirrel;
 import Help.EntityType;
 import Help.XY;

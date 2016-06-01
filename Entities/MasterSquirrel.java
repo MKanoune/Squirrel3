@@ -1,5 +1,6 @@
 package Entities;
 
+import Bot.BotImpl.MiniSquirrelBot;
 import Core.Board.EntityContext;
 import Help.XY;
 

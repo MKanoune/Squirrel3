@@ -11,6 +11,8 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import Bot.BotImpl.MasterSquirrelBot;
+import Bot.BotImpl.MiniSquirrelBot.ControllerContextImplMini;
 import Entities.BadBeast;
 import Entities.BadPlant;
 import Entities.Entity;
@@ -18,25 +20,23 @@ import Entities.GoodBeast;
 import Entities.GoodPlant;
 import Entities.GuidedMasterSquirrel;
 import Entities.MasterSquirrel;
-import Entities.MasterSquirrelBot;
 import Entities.Wall;
-import Entities.MiniSquirrelBot.ControllerContextImplMini;
 import Help.EntityType;
 import Help.XY;
 
 public class Board {
 	BoardConfig config;
-//	EntitySet container;
 	Map<String, Integer> Highscore;
 	Vector<Entity> container; 
 	private static int recentID;
 	public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
+	GuidedMasterSquirrel master;
 	
 	public Board(){
 		this.config = new BoardConfig();
-		//container = new EntitySet(config.Size);
 		container = new Vector<Entity>();
 		setStartEntities();
+		setPlayer();
 		setBots();
 		for(int i =0; i < container.size();i++){
 			System.out.println(container.get(i));
@@ -123,7 +123,7 @@ public class Board {
 	
 	public void setBots(){
 		try {
-			for(int i = 0; i < config.playerCount;i++){
+			for(int i = 0; i < config.botCount;i++){
 				Class<?> cl = Class.forName(config.Bots[i]);
 				Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
 				container.addElement((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[i]));
@@ -135,6 +135,14 @@ public class Board {
 		}
 	}
 
+	
+	public void setPlayer(){
+		if(config.playerMode){
+			master = new GuidedMasterSquirrel(getNewID(),rndmPos()); 
+			insert(master);
+		}
+	}
+	
 	public void deleteStartEntitys(){
 		for(int i = container.size()-1; i>=0;i--){
 			if(!(container.get(i) instanceof MasterSquirrel))
@@ -142,6 +150,8 @@ public class Board {
 		}
 			
 	}
+	
+	
 	
 
 	public void setHighScore(){
@@ -179,6 +189,9 @@ public class Board {
 		return (flatten().getEntityAt(pos.getX(), pos.getY())== null);
 	}
 	
+	public GuidedMasterSquirrel getMaster(){
+		return master;
+	}
 	
 	
 	

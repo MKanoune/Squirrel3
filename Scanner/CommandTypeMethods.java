@@ -2,11 +2,11 @@ package Scanner;
 
 import java.lang.reflect.*;
 
+import Bot.BotImpl.MiniSquirrelBot;
 import Core.Board.Board;
 import Core.Board.FlattenedBoard;
 import Entities.Entity;
 import Entities.GuidedMasterSquirrel;
-import Entities.MiniSquirrelBot;
 import Entities.Squirrel;
 import Help.XY;
 
@@ -46,6 +46,7 @@ public class CommandTypeMethods {
     }
  
     public void mini() throws InterruptedException {
+    	if(master == null){return;}
     	int energy = 100;
     	XY pos = XY.addVector(master.xy, XY.RandomMoveCommand());
     	if(!board.flatten().isPositionEmpty(pos)){

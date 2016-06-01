@@ -1,12 +1,13 @@
-package Entities;
+package Bot.BotImpl;
 
 import Bot.BotController;
 import Bot.BotControllerFactory;
 import Bot.ControllerContext;
 import Bot.ControllerFactory;
-import Bot.BotImpl.masterBotController;
 import Core.Board.Board;
 import Core.Board.EntityContext;
+import Entities.Entity;
+import Entities.MasterSquirrel;
 import Help.EntityType;
 import Help.XY;
 

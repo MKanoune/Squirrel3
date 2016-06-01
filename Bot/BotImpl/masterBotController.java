@@ -8,8 +8,6 @@ import Entities.Entity;
 import Entities.GoodBeast;
 import Entities.GoodPlant;
 import Entities.MasterSquirrel;
-import Entities.MasterSquirrelBot;
-import Entities.MiniSquirrelBot;
 import Help.XY;
 
 public class masterBotController implements BotController {

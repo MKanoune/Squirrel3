@@ -2,6 +2,8 @@ package Core.Board;
 
 import java.util.logging.Level;
 
+import Bot.BotImpl.MasterSquirrelBot;
+import Bot.BotImpl.MiniSquirrelBot;
 import Entities.BadBeast;
 import Entities.BadPlant;
 import Entities.Entity;
@@ -9,8 +11,6 @@ import Entities.GoodBeast;
 import Entities.GoodPlant;
 import Entities.GuidedMasterSquirrel;
 import Entities.MasterSquirrel;
-import Entities.MasterSquirrelBot;
-import Entities.MiniSquirrelBot;
 import Entities.Squirrel;
 import Entities.Wall;
 import Help.EntityType;

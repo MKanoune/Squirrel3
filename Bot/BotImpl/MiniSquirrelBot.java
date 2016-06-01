@@ -1,4 +1,4 @@
-package Entities;
+package Bot.BotImpl;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -6,8 +6,15 @@ import java.util.logging.Logger;
 import Bot.BotController;
 import Bot.ControllerContextWImplode;
 import Bot.ControllerFactory;
-import Bot.BotImpl.miniBotController;
 import Core.Board.EntityContext;
+import Entities.BadBeast;
+import Entities.BadPlant;
+import Entities.Entity;
+import Entities.GoodBeast;
+import Entities.GoodPlant;
+import Entities.MasterSquirrel;
+import Entities.Squirrel;
+import Entities.Wall;
 import Help.EntityType;
 import Help.XY;
 
