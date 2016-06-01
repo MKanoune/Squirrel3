@@ -49,7 +49,7 @@ public class Board {
 					Thread.sleep(10000);
 					config.duration = 50000;
 					deleteStartEntitys();
-					setStartEntitys();
+					setStartEntities();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -164,7 +164,9 @@ public class Board {
 	public void deleteStartEntitys(){
 		for(int i = 0; i<vectorContainer.size();i++){
 			if(!(vectorContainer.get(i)instanceof MasterSquirrel)){
+				System.out.println(vectorContainer.get(i));
 				vectorContainer.remove(i);
+				
 			}
 		}
 			

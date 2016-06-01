@@ -26,10 +26,13 @@ public class FlattenedBoard implements BoardView, EntityContext {
 		this.board = board;
 		this.Size = board.config.Size;
 		cells = new Entity [this.Size.getY()][this.Size.getX()];
-		for(int i = 0; i < board.container.pos; i++){
-			if(board.container.container[i]!= null){
-				cells[board.container.container[i].xy.getY()][board.container.container[i].xy.getX()] = board.container.container[i];
-			}
+		for(int i = 0; i < board.vectorContainer.size(); i++){
+			cells[board.vectorContainer.get(i).xy.getY()][board.vectorContainer.get(i).xy.getX()]=board.vectorContainer.get(i);
+		
+//		for(int i = 0; i < board.container.pos; i++){
+//			if(board.container.container[i]!= null){
+//				cells[board.container.container[i].xy.getY()][board.container.container[i].xy.getX()] = board.container.container[i];
+//			}
 		}
 	}
 	
@@ -426,6 +429,12 @@ public class FlattenedBoard implements BoardView, EntityContext {
 		}
 		kill(bot);
 		
+	}
+
+
+	@Override
+	public int getDuration() {
+		return board.config.duration;
 	}
 	
 

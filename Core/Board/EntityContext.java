@@ -35,4 +35,6 @@ public interface EntityContext {
 	public Entity getEntity(int x, int y);
 	
 	public void implode(MiniSquirrelBot bot);
+
+	int getDuration();
 }
