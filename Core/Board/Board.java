@@ -12,7 +12,9 @@ import Entities.BadPlant;
 import Entities.Entity;
 import Entities.GoodBeast;
 import Entities.GoodPlant;
+import Entities.GuidedMasterSquirrel;
 import Entities.MasterSquirrel;
+import Entities.MasterSquirrelBot;
 import Entities.Wall;
 import Help.EntityType;
 import Help.XY;
@@ -29,6 +31,9 @@ public class Board {
 		vectorContainer = new Vector<Entity>();
 		setStartEntities();
 		setBots();
+		for(int i =0; i < vectorContainer.size();i++){
+			System.out.println(vectorContainer.get(i));
+		}
 	}
 	
 	
@@ -37,17 +42,17 @@ public class Board {
 	}
 	
 	public void update(){
+		config.duration--;
+		System.out.println(config.duration);
 //		for(int i=0;i<container.container.length;i++){
 //			if(container.container[i]!=null){
 //			container.container[i].nextStep(flatten());
 		for(int i = 0; i< vectorContainer.size();i++){
 			vectorContainer.get(i).nextStep(flatten());
-			config.duration--;
-			System.out.println(config.duration);
 			if(config.duration == 0){
 				try {
 					Thread.sleep(10000);
-					config.duration = 50000;
+					config.duration = 50;
 					deleteStartEntitys();
 					setStartEntities();
 				} catch (InterruptedException e) {
@@ -162,12 +167,9 @@ public class Board {
 	}
 
 	public void deleteStartEntitys(){
-		for(int i = 0; i<vectorContainer.size();i++){
-			if(!(vectorContainer.get(i)instanceof MasterSquirrel)){
-				System.out.println(vectorContainer.get(i));
-				vectorContainer.remove(i);
-				
-			}
+		for(int i = vectorContainer.size()-1; i>=0;i--){
+			if(!(vectorContainer.get(i) instanceof MasterSquirrel))
+				vectorContainer.removeElementAt(i);
 		}
 			
 	}
