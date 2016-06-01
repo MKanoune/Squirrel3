@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import Entities.BadBeast;
 import Entities.BadPlant;
@@ -18,6 +20,7 @@ import Entities.GuidedMasterSquirrel;
 import Entities.MasterSquirrel;
 import Entities.MasterSquirrelBot;
 import Entities.Wall;
+import Entities.MiniSquirrelBot.ControllerContextImplMini;
 import Help.EntityType;
 import Help.XY;
 
@@ -27,6 +30,7 @@ public class Board {
 	Map<String, Integer> Highscore;
 	Vector<Entity> vectorContainer; 
 	private static int recentID;
+	public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
 	
 	public Board(){
 		this.config = new BoardConfig();
@@ -180,6 +184,7 @@ public class Board {
 	}
 	
 	public void printHighScore(){
+		logger.log(Level.INFO, Highscore.toString());
 		System.out.println(Highscore);
 	}
 	
