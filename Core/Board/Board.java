@@ -2,41 +2,61 @@ package Core.Board;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import java.util.function.Predicate;
 
 import Entities.BadBeast;
 import Entities.BadPlant;
 import Entities.Entity;
 import Entities.GoodBeast;
 import Entities.GoodPlant;
+import Entities.MasterSquirrel;
 import Entities.Wall;
+import Help.EntityType;
 import Help.XY;
 
 public class Board {
 	BoardConfig config;
-	EntitySet container;
-	int pos;
-	//public Entity[]container;
+	//EntitySet container;
+	Vector<Entity> vectorContainer; 
 	private static int recentID;
 	
 	public Board(){
 		this.config = new BoardConfig();
-		container = new EntitySet(config.Size);
-		//this.container = new Entity[config.getEntityCount()+1];//+1 for Squirrel
-		setStartEntitys();
+		//container = new EntitySet(config.Size);
+		vectorContainer = new Vector<Entity>();
+		setStartEntities();
+		setBots();
 	}
 	
-	public int getPos(){return pos;}
 	
 	public XY getSize(){
 		return config.Size;
 	}
 	
 	public void update(){
-		for(int i=0;i<container.container.length;i++){
-			if(container.container[i]!=null){
-			container.container[i].nextStep(flatten());
+//		for(int i=0;i<container.container.length;i++){
+//			if(container.container[i]!=null){
+//			container.container[i].nextStep(flatten());
+		for(int i = 0; i< vectorContainer.size();i++){
+			vectorContainer.get(i).nextStep(flatten());
+			config.duration--;
+			System.out.println(config.duration);
+			if(config.duration == 0){
+				try {
+					Thread.sleep(10000);
+					config.duration = 50000;
+					deleteStartEntitys();
+					setStartEntitys();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
+		
 	}
 	
 	@Override
@@ -45,65 +65,111 @@ public class Board {
 		 return out;
 	 }
 	
-	public void setNewEntity(Entity entity){
-		for(int i =0; i< container.container.length; i++){
-			if(container.container[i]== null){
-				container.container[i]= entity;
-				break;
-			}
-		}
-	}
+//	public void setNewEntity(Entity entity){
+//		for(int i =0; i< container.container.length; i++){
+//			if(container.container[i]== null){
+//				container.container[i]= entity;
+//				break;
+//			}
+//		}
+//	}
 	
 	public void delete(Entity e){
-		container.delete(e);
+		vectorContainer.remove(e);
 	}
 	
 	public void insert(Entity e){
-		container.insert(e);
+		vectorContainer.addElement(e);
 	}
 	
 	private void setStartEntitys() {
-			for(int x = 0; x < config.Size.getX(); x++){
-				container.insert(new Wall(getNewID(),new XY(x,0)));
-			}
-			for(int x = 0; x < config.Size.getX(); x++){
-				container.insert(new Wall(getNewID(),new XY(x,config.Size.getY()-1)));
-			}
-			for(int y = 1; y < config.Size.getY()-1; y++){
-				container.insert(new Wall(getNewID(),new XY(0,y)));
-			}
-			for(int y = 1; y < config.Size.getY()-1; y++){
-				container.insert(new Wall(getNewID(),new XY(config.Size.getX()-1,y)));
-			}
-			for (int i = 0; i < config.badPlantCount; i++){
-				container.insert(new BadPlant(getNewID(),rndmPos()));
-			}
-			for (int i = 0; i < config.goodPlantCount; i++){
-				container.insert(new GoodPlant(getNewID(),rndmPos()));
-			}
-			for (int i = 0; i < config.badBeastCount; i++){
-				container.insert(new BadBeast(getNewID(),rndmPos()));
-        	}
-			for (int i = 0; i < config.goodBeastCount; i++){
-				container.insert(new GoodBeast(getNewID(),rndmPos()));
-        	}
-			for(int i = 0; i < config.wallCount2; i++){
-				container.insert(new Wall(getNewID(),rndmPos()));
-			}
-			try {
-				for(int i = 0; i < config.playerCount;i++){
-					Class<?> cl = Class.forName(config.Bots[i]);
-					Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
-					//Object o = constructor.newInstance(getNewID(),rndmPos(),config.energy[i]);
-					container.insert((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[i]));
-				}
-				
-			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				System.out.println("Class not found");
-				e.printStackTrace();
-			}
+//			for(int x = 0; x < config.Size.getX(); x++){
+//				container.insert(new Wall(getNewID(),new XY(x,0)));
+//			}
+//			for(int x = 0; x < config.Size.getX(); x++){
+//				container.insert(new Wall(getNewID(),new XY(x,config.Size.getY()-1)));
+//			}
+//			for(int y = 1; y < config.Size.getY()-1; y++){
+//				container.insert(new Wall(getNewID(),new XY(0,y)));
+//			}
+//			for(int y = 1; y < config.Size.getY()-1; y++){
+//				container.insert(new Wall(getNewID(),new XY(config.Size.getX()-1,y)));
+//			}
+//			for (int i = 0; i < config.badPlantCount; i++){
+//				container.insert(new BadPlant(getNewID(),rndmPos()));
+//			}
+//			for (int i = 0; i < config.goodPlantCount; i++){
+//				container.insert(new GoodPlant(getNewID(),rndmPos()));
+//			}
+//			for (int i = 0; i < config.badBeastCount; i++){
+//				container.insert(new BadBeast(getNewID(),rndmPos()));
+//        	}
+//			for (int i = 0; i < config.goodBeastCount; i++){
+//				container.insert(new GoodBeast(getNewID(),rndmPos()));
+//        	}
+//			for(int i = 0; i < config.wallCount2; i++){
+//				container.insert(new Wall(getNewID(),rndmPos()));
+//			}
+//			
 	}
 
+	
+	private void setStartEntities(){
+		for(int x = 0; x < config.Size.getX(); x++){
+			vectorContainer.add(new Wall(getNewID(),new XY(x,0)));
+		}
+		for(int x = 0; x < config.Size.getX(); x++){
+			vectorContainer.add(new Wall(getNewID(),new XY(x,config.Size.getY()-1)));
+		}
+		for(int y = 1; y < config.Size.getY()-1; y++){
+			vectorContainer.add(new Wall(getNewID(),new XY(0,y)));
+		}
+		for(int y = 1; y < config.Size.getY()-1; y++){
+			vectorContainer.add(new Wall(getNewID(),new XY(config.Size.getX()-1,y)));
+		}
+		for (int i = 0; i < config.badPlantCount; i++){
+			vectorContainer.add(new BadPlant(getNewID(),rndmPos()));
+		}
+		for (int i = 0; i < config.goodPlantCount; i++){
+			vectorContainer.add(new GoodPlant(getNewID(),rndmPos()));
+		}
+		for (int i = 0; i < config.badBeastCount; i++){
+			vectorContainer.add(new BadBeast(getNewID(),rndmPos()));
+    	}
+		for (int i = 0; i < config.goodBeastCount; i++){
+			vectorContainer.add(new GoodBeast(getNewID(),rndmPos()));
+    	}
+		for(int i = 0; i < config.wallCount2; i++){
+			vectorContainer.add(new Wall(getNewID(),rndmPos()));
+		}
+		
+	}
+	
+	
+	
+	public void setBots(){
+		try {
+			for(int i = 0; i < config.playerCount;i++){
+				Class<?> cl = Class.forName(config.Bots[i]);
+				Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
+				vectorContainer.addElement((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[i]));
+			}
+			
+		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			System.out.println("Class not found");
+			e.printStackTrace();
+		}
+	}
+
+	public void deleteStartEntitys(){
+		for(int i = 0; i<vectorContainer.size();i++){
+			if(!(vectorContainer.get(i)instanceof MasterSquirrel)){
+				vectorContainer.remove(i);
+			}
+		}
+			
+	}
+	
 	
 	public FlattenedBoard flatten(){
 		FlattenedBoard fb = new FlattenedBoard(this);
