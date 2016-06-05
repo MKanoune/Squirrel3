@@ -5,7 +5,7 @@ import Help.XY;
 
 public class BoardConfig {
 	
-	protected final XY Size = new XY(40, 25);
+	protected XY Size = new XY(40, 25);
 	protected final int wallCount = (Size.getX()*2)+((Size.getY()-2)*2);
     protected final int badBeastCount = 0;
     protected final int goodBeastCount = 5;

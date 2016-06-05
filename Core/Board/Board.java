@@ -40,9 +40,7 @@ public class Board {
 	public Board(){
 		this.config = new BoardConfig();
 		container = new ArrayList<Entity>();
-		setStartEntities();
-		setPlayer();
-		setBots();
+		setStart();
 		getHighscore();
 	}
 	
@@ -92,9 +90,45 @@ public class Board {
 		container.add(e);
 	}
 	
-
 	
-	private void setStartEntities(){
+	private void setStart(){
+		FileReader fr;
+		try {
+			fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/config.txt");
+			BufferedReader br = new BufferedReader(fr);
+			while(true){
+				String high = br.readLine();
+				if(high.equals("Start:")){
+					break;
+				}
+			}
+			String size = br.readLine();
+			String[] splitt = size.split("#");
+			config.Size = new XY(Integer.parseInt(splitt[1]),Integer.parseInt(splitt[2]));
+			setWalls();
+			for(int e = 0; e<4;e++){
+				String count = br.readLine();
+				String[] spl = count.split("#");
+				for(int i =0;i<Integer.parseInt(spl[1]);i++){
+					Class<?> cl = Class.forName(spl[0]);
+					Constructor<?> constructor = cl.getConstructor(int.class,XY.class);
+					container.add((Entity) constructor.newInstance(getNewID(),rndmPos()));
+				}
+			}
+			br.close();
+			setPlayer();
+			setBots();
+			
+		} catch (IOException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			container.clear();
+			setStartEntities();
+			System.err.println("Irgendwas doofes ist in Config_Start: passiert :/");
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private void setWalls(){
 		for(int x = 0; x < config.Size.getX(); x++){
 			container.add(new Wall(getNewID(),new XY(x,0)));
 		}
@@ -107,6 +141,10 @@ public class Board {
 		for(int y = 1; y < config.Size.getY()-1; y++){
 			container.add(new Wall(getNewID(),new XY(config.Size.getX()-1,y)));
 		}
+	}
+	
+	private void setStartEntities(){
+		setWalls();
 		for (int i = 0; i < config.badPlantCount; i++){
 			container.add(new BadPlant(getNewID(),rndmPos()));
 		}
@@ -125,16 +163,17 @@ public class Board {
 		
 	}
 	
-	
-	
 	public void setBots(){
 		try {
 			FileReader fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/config.txt");
 			BufferedReader br = new BufferedReader(fr);
 				try {
-					int botCount = Integer.parseInt(br.readLine());
+					br.readLine();
+					String bCount = br.readLine();
+					String[]s = bCount.split("#");
+					int botCount = Integer.parseInt(s[1]);
 					config.setBotCount(botCount);
-					for(int i = 0; i < botCount;i++){
+					for(int i = 0; i < config.botCount;i++){
 						Class<?> cl = Class.forName(br.readLine());
 						Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
 						container.add((Entity) constructor.newInstance(getNewID(),rndmPos(),Integer.parseInt(br.readLine())));
