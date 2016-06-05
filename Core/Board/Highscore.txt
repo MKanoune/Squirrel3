@@ -1,0 +1,4 @@
+Entities.GuidedMasterSquirrel0 1000
+Bot.BotImpl.MasterSquirrelBot1 830
+Bot.BotImpl.MasterSquirrelBot2 2000
+Bot.BotImpl.MasterSquirrelBot3 3000

@@ -1,17 +1,19 @@
 package Core.Board;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import Bot.BotImpl.MasterSquirrelBot;
 import Bot.BotImpl.MiniSquirrelBot.ControllerContextImplMini;
 import Entities.BadBeast;
 import Entities.BadPlant;
@@ -21,16 +23,16 @@ import Entities.GoodPlant;
 import Entities.GuidedMasterSquirrel;
 import Entities.MasterSquirrel;
 import Entities.Wall;
-import Help.EntityType;
 import Help.XY;
 
 public class Board {
 	BoardConfig config;
-	Map<String, Integer> Highscore;
+	Map<String, Integer> Highscore = new HashMap<>();
 	Vector<Entity> container; 
 	private static int recentID;
 	public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
 	GuidedMasterSquirrel master;
+	
 	
 	public Board(){
 		this.config = new BoardConfig();
@@ -38,9 +40,7 @@ public class Board {
 		setStartEntities();
 		setPlayer();
 		setBots();
-		for(int i =0; i < container.size();i++){
-			System.out.println(container.get(i));
-		}
+		
 	}
 	
 	
@@ -51,9 +51,6 @@ public class Board {
 	public void update(){
 		config.duration--;
 		System.out.println(config.duration);
-//		for(int i=0;i<container.container.length;i++){
-//			if(container.container[i]!=null){
-//			container.container[i].nextStep(flatten());
 		for(int i = 0; i< container.size();i++){
 			container.get(i).nextStep(flatten());
 			if(config.duration == 0){
@@ -61,7 +58,7 @@ public class Board {
 					Thread.sleep(10000);
 					config.duration = config.standardDuration;
 					deleteStartEntitys();
-					setHighScore();
+					setNewHighscore();
 					printHighScore();
 					setStartEntities();
 				} catch (InterruptedException e) {
@@ -123,16 +120,37 @@ public class Board {
 	
 	public void setBots(){
 		try {
-			for(int i = 0; i < config.botCount;i++){
-				Class<?> cl = Class.forName(config.Bots[i]);
-				Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
-				container.addElement((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[i]));
-			}
+			FileReader fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/config.txt");
+			BufferedReader br = new BufferedReader(fr);
+				try {
+					int botCount = Integer.parseInt(br.readLine());
+					for(int i = 0; i < botCount;i++){
+						Class<?> cl = Class.forName(br.readLine());
+						Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
+						container.addElement((Entity) constructor.newInstance(getNewID(),rndmPos(),Integer.parseInt(br.readLine())));
+					}
+					br.close();
+				}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
+					System.out.println("Class not found");
+					e.printStackTrace();
+				}
+
+				}catch (FileNotFoundException g) {
+					try {
+						for(int i = 0; i < config.botCount;i++){
+							Class<?> cl = Class.forName(config.Bots[i]);
+							Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
+							container.addElement((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[0]));
+							g.printStackTrace();
+						}
+					}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException d) {
+						System.out.println("Class not found");
+						d.printStackTrace();
+					}
+						
+				}
+				
 			
-		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			System.out.println("Class not found");
-			e.printStackTrace();
-		}
 	}
 
 	
@@ -154,14 +172,41 @@ public class Board {
 	
 	
 
-	public void setHighScore(){
-		Highscore = new HashMap<>();
-		for(int i = 0; i<container.size();i++){
-			if(container.get(i) instanceof MasterSquirrel){
-				Highscore.put(container.get(i).getClass().getName(), container.get(i).getEnergy());
+	public void setNewHighscore(){
+		FileWriter fw;
+		try {
+			fw = new FileWriter("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
+			BufferedWriter bw = new BufferedWriter(fw);
+			for(int i = 0; i<container.size();i++){
+				if(container.get(i) instanceof MasterSquirrel){
+					String key = container.get(i).getClass().getName()+i;
+					Integer highscore = container.get(i).getEnergy();
+					Highscore.put(key,highscore);
+					bw.write(key+" "+ highscore);
+					bw.newLine();
+				}
 			}
+			bw.close();
+		} catch (IOException e1) {
+			System.err.println("Datei konnte nicht erstellt werden");
+			for(int i = 0; i<container.size();i++){
+				if(container.get(i) instanceof MasterSquirrel){
+					String key = container.get(i).getClass().getName()+i;
+					Integer highscore = container.get(i).getEnergy();
+					Highscore.put(key,highscore);
+				}
+			}
+			e1.printStackTrace();
 		}
+		
 	}
+	
+	
+	public String getHighscore(){
+		return null;
+		
+	}
+	
 	
 	public void printHighScore(){
 		logger.log(Level.INFO, Highscore.toString());
