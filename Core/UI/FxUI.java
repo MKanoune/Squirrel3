@@ -50,16 +50,16 @@ public class FxUI extends Scene implements UI {
 	public static FxUI createInstance(XY boardSize){
 			Canvas boardCanvas = new Canvas(boardSize.getX()*CELL_SIZE,boardSize.getY()*CELL_SIZE);
 			Label statusLabel = new Label();
-			Label energyLabel = new Label();
+			Label stepLabel = new Label();
 			Button button = new Button("MINI");
 	        VBox top = new VBox();
 	        top.getChildren().add(button);
 	        top.getChildren().add(boardCanvas);
 	        top.getChildren().add(statusLabel);
-	        top.getChildren().add(energyLabel);
-	        statusLabel.setText("hello world!");
-	       // energyLabel.setText("Energy: ");
+	        top.getChildren().add(stepLabel);
 	        
+	        statusLabel.setText("hello world!");
+	        stepLabel.setText("Steps:");
 	        
 	        final FxUI fxUI = new FxUI(top, boardCanvas, statusLabel); 
 	        
@@ -94,7 +94,7 @@ public class FxUI extends Scene implements UI {
 	        );
 	        return fxUI;
 	}
-
+//	public void setStatusLabel
 
 	@Override
 	public void getCommand() throws ScanException {
@@ -126,7 +126,7 @@ public class FxUI extends Scene implements UI {
     			if(type.paintType.equals("oval")){
     				gc.setFill(type.color);
     				gc.fillOval(xCord, yCord, CELL_SIZE, CELL_SIZE);
-    				if(type == EntityType.GuidedMasterSquirrel || type == EntityType.MasterSquirrelBot){
+    				if(type == EntityType.GuidedMasterSquirrel || type == EntityType.MasterSquirrelBot || type == EntityType.BastiBot){
     					gc.setFill(Color.WHITE);
     					gc.fillText(String.valueOf(view.getEnergy(x, y)) ,x*CELL_SIZE, (y*CELL_SIZE)+CELL_SIZE/1.5, CELL_SIZE);
     				}

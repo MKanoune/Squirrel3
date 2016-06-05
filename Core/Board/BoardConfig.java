@@ -5,23 +5,22 @@ import Help.XY;
 
 public class BoardConfig {
 	
-	public final XY Size = new XY(40, 25);
-    public final int wallCount = (Size.getX()*2)+((Size.getY()-2)*2);
-    public final int badBeastCount = 0;
-    public final int goodBeastCount = 5;
-    public final int goodPlantCount = 5;
-    public final int badPlantCount = 5;
-    public final int wallCount2 = 0;
-    public String Bot1 = "Bot.BotImpl.MasterSquirrelBot";
-    public int Bot1Energy = 1000;
-    public String Bot2 = "Bot.BotImpl.MasterSquirrelBot";
-    public int Bot2Energy = 2000;
-    public int [] energy = {Bot1Energy,Bot2Energy};
-    public String []Bots = {Bot1,Bot2};
-    public int botCount = 2;
-    public boolean playerMode = true;
-    public final int standardDuration = 50;
+	protected final XY Size = new XY(40, 25);
+	protected final int wallCount = (Size.getX()*2)+((Size.getY()-2)*2);
+    protected final int badBeastCount = 0;
+    protected final int goodBeastCount = 5;
+    protected final int goodPlantCount = 5;
+    protected final int badPlantCount = 5;
+    protected final int wallCount2 = 0;
+
+    protected int [] energy = {1000,2000};
+    protected String []Bots = {"Bot.BotImpl.MasterSquirrelBot","Bot.BotImpl.BastiBot"};
+    protected int botCount = 2;
+    protected boolean playerMode = true;
+    protected final int standardDuration = 50;
     public int duration = standardDuration;
+    public int rounds;
+    
     
    
 	public int EntityCount(){

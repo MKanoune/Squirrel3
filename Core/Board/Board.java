@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -27,7 +28,7 @@ import Help.XY;
 
 public class Board {
 	BoardConfig config;
-	Map<String, Integer> Highscore = new HashMap<>();
+	Map<String, Integer> Highscore = new HashMap<>();//arraylist
 	Vector<Entity> container; 
 	private static int recentID;
 	public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
@@ -65,16 +66,12 @@ public class Board {
 					Thread.sleep(10000);
 					config.duration = config.standardDuration;
 					deleteStartEntitys();
-//					if(r==1){
-//						setHighscore();
-//					}else{
-//						setNewHighscore();
-//					}
 					printHighScore();
 					setStartEntities();
 					r++;
-					System.out.println("Runde "+r+"!!");
+					System.out.println("----Runde "+r+"!!----");
 				}catch (InterruptedException e) {
+					System.out.println("Irgendwas doofes ist passiert :/");
 					e.printStackTrace();
 				}
 			}
