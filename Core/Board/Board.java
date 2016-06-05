@@ -2,6 +2,7 @@ package Core.Board;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,6 +11,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -28,7 +30,7 @@ import Help.XY;
 
 public class Board {
 	BoardConfig config;
-	Map<String, Integer> Highscore = new HashMap<>();//arraylist
+	Map<String, ArrayList<Integer>> Highscore = new HashMap<>();//arraylist
 	Vector<Entity> container; 
 	private static int recentID;
 	public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
@@ -192,8 +194,23 @@ public class Board {
 				if(container.get(i) instanceof MasterSquirrel){
 					String key = container.get(i).getClass().getName();
 					Integer highscore = container.get(i).getEnergy();
-					Highscore.put(key,highscore);
-					bw.write(key+" "+ highscore);
+					ArrayList<Integer> l = new ArrayList<>();
+					if(Highscore.get(key)==null){
+						l.add(highscore);
+						Highscore.put(key, l);
+					}else{
+						l = Highscore.get(key);
+						l.add(highscore);
+						Collections.sort(l);
+						Collections.reverse(l);
+						Highscore.put(key, l);
+					}
+					String s = "";
+					for(int j=0;j<l.size();j++){
+						s += l.get(j);
+						s += " ";
+					}
+					bw.write(key+" "+ s);
 					bw.newLine();
 					
 				}
@@ -203,9 +220,14 @@ public class Board {
 			System.err.println("Datei konnte nicht erstellt werden");
 			for(int i = 0; i<container.size();i++){
 				if(container.get(i) instanceof MasterSquirrel){
-					String key = container.get(i).getClass().getName()+i;
+					String key = container.get(i).getClass().getName();
+					ArrayList<Integer> l = new ArrayList<>();
+					for(int j = 0; j<Highscore.get(key).size(); j++){
+						l.add(Highscore.get(key).get(i));
+					}
 					Integer highscore = container.get(i).getEnergy();
-					Highscore.put(key,highscore);
+					l.add(highscore);
+					Highscore.put(key,l);
 				}
 			}
 			e1.printStackTrace();
@@ -214,32 +236,48 @@ public class Board {
 	}
 	
 	
-	public void setHighscore(){
-		try{
-			PrintWriter writer = new PrintWriter("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
-			for(int i = 0; i<container.size();i++){
-				if(container.get(i) instanceof MasterSquirrel){
-					String key = container.get(i).getClass().getName();
-					Integer highscore = container.get(i).getEnergy();
-					Highscore.put(key,highscore);
-					writer.write(key+" "+highscore);
-					writer.append(System.getProperty("line.separator"));
-				}
-			}
-			writer.close();
-		}catch(FileNotFoundException e){
-			System.err.println("Datei konnte nicht erstellt werden");
-			for(int i = 0; i<container.size();i++){
-				if(container.get(i) instanceof MasterSquirrel){
-					String key = container.get(i).getClass().getName()+i;
-					Integer highscore = container.get(i).getEnergy();
-					Highscore.put(key,highscore);
-				}
-			}
-			e.printStackTrace();
-		}
-	}
+	private boolean isEmpty(File file) throws IOException {
+        File test = file;
+        FileReader fr = new FileReader(test);
+        BufferedReader br = new BufferedReader(fr);
+        String empty = br.readLine();
+        br.close();
+        fr.close();
+        if (empty == null)
+            return true;
+        else if (empty.isEmpty())
+            return true;
+        else
+            return false;
+    }
 	
+	
+//	public void setHighscore(){
+//		try{
+//			PrintWriter writer = new PrintWriter("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
+//			for(int i = 0; i<container.size();i++){
+//				if(container.get(i) instanceof MasterSquirrel){
+//					String key = container.get(i).getClass().getName();
+//					Integer highscore = container.get(i).getEnergy();
+//					Highscore.put(key,highscore);
+//					writer.write(key+" "+highscore);
+//					writer.append(System.getProperty("line.separator"));
+//				}
+//			}
+//			writer.close();
+//		}catch(FileNotFoundException e){
+//			System.err.println("Datei konnte nicht erstellt werden");
+//			for(int i = 0; i<container.size();i++){
+//				if(container.get(i) instanceof MasterSquirrel){
+//					String key = container.get(i).getClass().getName()+i;
+//					Integer highscore = container.get(i).getEnergy();
+//					Highscore.put(key,highscore);
+//				}
+//			}
+//			e.printStackTrace();
+//		}
+//	}
+//	
 	
 	public void getHighscore(){
 		FileReader fr;
@@ -247,12 +285,18 @@ public class Board {
 			fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
 			BufferedReader br = new BufferedReader(fr);
 			while(true){
-				String l = br.readLine();
-				if(l == null){
+				String high = br.readLine();
+				if(high == null){
 					break;
 				}
-				String [] splitt = l.split(" ");
-				Highscore.put(splitt[0], Integer.parseInt(splitt[1]));
+				String [] splitted = high.split(" ");
+				System.out.println(splitted[0]);
+				System.out.println(splitted[1]);
+				ArrayList<Integer> list = new ArrayList<>();
+				for(int i = 1;i<splitted.length;i++){
+					list.add(Integer.parseInt(splitted[i]));
+				}
+				Highscore.put(splitted[0],list);
 			}
 			System.out.println("Bisheriger Highscore: "+Highscore.toString());
 			br.close();
