@@ -6,12 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import Bot.BotImpl.MiniSquirrelBot.ControllerContextImplMini;
@@ -32,6 +32,8 @@ public class Board {
 	private static int recentID;
 	public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
 	GuidedMasterSquirrel master;
+	int rounds = 2;
+	int r = 1;
 	
 	
 	public Board(){
@@ -40,6 +42,7 @@ public class Board {
 		setStartEntities();
 		setPlayer();
 		setBots();
+		getHighscore();
 		
 	}
 	
@@ -55,13 +58,23 @@ public class Board {
 			container.get(i).nextStep(flatten());
 			if(config.duration == 0){
 				try {
+					if(r>=rounds){
+						setNewHighscore();
+						System.exit(0);
+					}
 					Thread.sleep(10000);
 					config.duration = config.standardDuration;
 					deleteStartEntitys();
-					setNewHighscore();
+//					if(r==1){
+//						setHighscore();
+//					}else{
+//						setNewHighscore();
+//					}
 					printHighScore();
 					setStartEntities();
-				} catch (InterruptedException e) {
+					r++;
+					System.out.println("Runde "+r+"!!");
+				}catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
@@ -124,6 +137,7 @@ public class Board {
 			BufferedReader br = new BufferedReader(fr);
 				try {
 					int botCount = Integer.parseInt(br.readLine());
+					config.setBotCount(botCount);
 					for(int i = 0; i < botCount;i++){
 						Class<?> cl = Class.forName(br.readLine());
 						Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
@@ -179,11 +193,12 @@ public class Board {
 			BufferedWriter bw = new BufferedWriter(fw);
 			for(int i = 0; i<container.size();i++){
 				if(container.get(i) instanceof MasterSquirrel){
-					String key = container.get(i).getClass().getName()+i;
+					String key = container.get(i).getClass().getName();
 					Integer highscore = container.get(i).getEnergy();
 					Highscore.put(key,highscore);
 					bw.write(key+" "+ highscore);
 					bw.newLine();
+					
 				}
 			}
 			bw.close();
@@ -202,14 +217,60 @@ public class Board {
 	}
 	
 	
-	public String getHighscore(){
-		return null;
+	public void setHighscore(){
+		try{
+			PrintWriter writer = new PrintWriter("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
+			for(int i = 0; i<container.size();i++){
+				if(container.get(i) instanceof MasterSquirrel){
+					String key = container.get(i).getClass().getName();
+					Integer highscore = container.get(i).getEnergy();
+					Highscore.put(key,highscore);
+					writer.write(key+" "+highscore);
+					writer.append(System.getProperty("line.separator"));
+				}
+			}
+			writer.close();
+		}catch(FileNotFoundException e){
+			System.err.println("Datei konnte nicht erstellt werden");
+			for(int i = 0; i<container.size();i++){
+				if(container.get(i) instanceof MasterSquirrel){
+					String key = container.get(i).getClass().getName()+i;
+					Integer highscore = container.get(i).getEnergy();
+					Highscore.put(key,highscore);
+				}
+			}
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void getHighscore(){
+		FileReader fr;
+		try {
+			fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
+			BufferedReader br = new BufferedReader(fr);
+			while(true){
+				String l = br.readLine();
+				if(l == null){
+					break;
+				}
+				String [] splitt = l.split(" ");
+				Highscore.put(splitt[0], Integer.parseInt(splitt[1]));
+			}
+			System.out.println("Bisheriger Highscore: "+Highscore.toString());
+			br.close();
+			
+		} catch (IOException e) {
+			System.err.println("Kein bisheriger Highscore vorhanden");
+			e.printStackTrace();
+		}
+		
 		
 	}
 	
 	
 	public void printHighScore(){
-		logger.log(Level.INFO, Highscore.toString());
+		//logger.log(Level.INFO, Highscore.toString());
 		System.out.println(Highscore);
 	}
 	

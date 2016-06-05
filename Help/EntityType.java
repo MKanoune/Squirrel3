@@ -4,6 +4,7 @@ import Bot.BotImpl.MasterSquirrelBot;
 import Bot.BotImpl.MiniSquirrelBot;
 import Entities.*;
 import javafx.scene.paint.Color;
+import Bot.BotImpl.BastiBot;
 
 
 public enum EntityType {
@@ -15,7 +16,9 @@ public enum EntityType {
 	BadBeast('B',Color.INDIANRED,"oval"),
 	GoodBeast('G',Color.CHOCOLATE,"oval"),
 	MasterSquirrelBot('s',Color.MIDNIGHTBLUE,"oval"),
+	BastiBot('b',Color.RED,"oval"),
 	Null('.',Color.BURLYWOOD,"rect");
+
 	
 	//public Entity entity;
 	public char token;
@@ -65,6 +68,8 @@ public enum EntityType {
 	            else if(entity.getClass() == MiniSquirrelBot.class)
 	            {
 	                return MiniSquirrelBot;
+	            }else if(entity.getClass() == BastiBot.class){
+	            	return BastiBot;
 	            }
 
 	        }

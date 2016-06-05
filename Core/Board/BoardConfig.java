@@ -38,4 +38,11 @@ public class BoardConfig {
     	return Size.getX()*Size.getY();
     }
    
+    public void setBotCount(int count){
+    	this.botCount = count;
+    }
+    
+    public int getBotCount(){
+    	return botCount;
+    }
 }
