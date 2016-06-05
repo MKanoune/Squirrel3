@@ -12,13 +12,13 @@ import Help.EntityType;
 import Help.XY;
 
 
-public class BastiBot extends MasterSquirrelBot {
+public class BastiSquirrelBot extends MasterSquirrelBot {
 	BotController controller;
 	//BotControllerFactory factory;
 	private int moveCount;
 	
 	
-	public BastiBot(int id, XY xy) {
+	public BastiSquirrelBot(int id, XY xy) {
 		super(id,xy);
 		ControllerFactory factory = new ControllerFactory();
 		BotController controller = factory.createMasterBotController();
@@ -28,7 +28,7 @@ public class BastiBot extends MasterSquirrelBot {
 	
 	
 	
-	public BastiBot(int id, XY xy,int energy) {
+	public BastiSquirrelBot(int id, XY xy,int energy) {
 		super(id,xy);
 		ControllerFactory factory = new ControllerFactory();
 		BotController controller = factory.createMasterBotController();
@@ -97,17 +97,17 @@ public class BastiBot extends MasterSquirrelBot {
 
 		@Override
 		public void move(XY direction) {
-			context.tryMove(BastiBot.this, direction);
+			context.tryMove(BastiSquirrelBot.this, direction);
 		}
 
 		@Override
 		public void spawnMiniBot(XY direction, int energy) {
-			context.spawnChildBot(BastiBot.this, direction, energy);
+			context.spawnChildBot(BastiSquirrelBot.this, direction, energy);
 		}
 
 		@Override
 		public int getEnergy() {
-			return BastiBot.this.getEnergy();
+			return BastiSquirrelBot.this.getEnergy();
 		}
 
 		@Override
@@ -136,7 +136,7 @@ public class BastiBot extends MasterSquirrelBot {
 
 		@Override
 		public XY getPosition() {
-			return BastiBot.this.xy;
+			return BastiSquirrelBot.this.xy;
 		}
 		
 

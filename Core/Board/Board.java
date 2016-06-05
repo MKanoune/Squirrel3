@@ -11,8 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import Bot.BotImpl.MiniSquirrelBot.ControllerContextImplMini;
@@ -29,7 +29,7 @@ import Help.XY;
 public class Board {
 	BoardConfig config;
 	Map<String, ArrayList<Integer>> Highscore = new HashMap<>();//arraylist
-	Vector<Entity> container; 
+	ArrayList<Entity> container; 
 	private static int recentID;
 	public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
 	GuidedMasterSquirrel master;
@@ -39,7 +39,7 @@ public class Board {
 	
 	public Board(){
 		this.config = new BoardConfig();
-		container = new Vector<Entity>();
+		container = new ArrayList<Entity>();
 		setStartEntities();
 		setPlayer();
 		setBots();
@@ -54,25 +54,25 @@ public class Board {
 	public void update(){
 		config.duration--;
 		System.out.println(config.duration);
-		for(int i = 0; i< container.size();i++){
+		for(int i = 0;i<container.size();i++){
 			container.get(i).nextStep(flatten());
-			if(config.duration == 0){
-				try {
-					if(r>=rounds){
-						setNewHighscore();
-						System.exit(0);
-					}
-					Thread.sleep(10000);
-					config.duration = config.standardDuration;
-					deleteStartEntitys();
-					System.out.println("Zwischenstand: "+Highscore);
-					setStartEntities();
-					r++;
-					System.out.println("----Runde "+r+"!!----");
-				}catch (InterruptedException e) {
-					System.out.println("Irgendwas doofes ist passiert :/");
-					e.printStackTrace();
+		}
+		if(config.duration == 0){
+			System.out.println("Zwischenstand: "+Highscore);
+			try {
+				if(r>=rounds){
+					setNewHighscore();
+					System.exit(0);
 				}
+				Thread.sleep(10000);
+				config.duration = config.standardDuration;
+				deleteStartEntitys();
+				setStartEntities();
+				r++;
+				System.out.println("----Runde "+r+"!!----");
+			}catch (InterruptedException e) {
+				System.out.println("Irgendwas doofes ist passiert :/");
+				e.printStackTrace();
 			}
 		}
 		
@@ -89,7 +89,7 @@ public class Board {
 	}
 	
 	public void insert(Entity e){
-		container.addElement(e);
+		container.add(e);
 	}
 	
 
@@ -137,7 +137,7 @@ public class Board {
 					for(int i = 0; i < botCount;i++){
 						Class<?> cl = Class.forName(br.readLine());
 						Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
-						container.addElement((Entity) constructor.newInstance(getNewID(),rndmPos(),Integer.parseInt(br.readLine())));
+						container.add((Entity) constructor.newInstance(getNewID(),rndmPos(),Integer.parseInt(br.readLine())));
 					}
 					br.close();
 				}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
@@ -150,7 +150,7 @@ public class Board {
 						for(int i = 0; i < config.botCount;i++){
 							Class<?> cl = Class.forName(config.Bots[i]);
 							Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
-							container.addElement((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[0]));
+							container.add((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[0]));
 							g.printStackTrace();
 						}
 					}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException d) {
@@ -172,11 +172,13 @@ public class Board {
 	}
 	
 	public void deleteStartEntitys(){
-		for(int i = container.size()-1; i>=0;i--){
-			if(!(container.get(i) instanceof MasterSquirrel))
-				container.removeElementAt(i);
+		for(Iterator<Entity> iterator = container.iterator();iterator.hasNext();){
+			Entity e = iterator.next();
+			if(!(e instanceof MasterSquirrel)){
+				iterator.remove();
+			}
 		}
-			
+
 	}
 	
 	
@@ -205,9 +207,9 @@ public class Board {
 					String s = "";
 					for(int j=0;j<l.size();j++){
 						s += l.get(j);
-						s += " ";
+						s += "\t";
 					}
-					bw.write(key+" "+ s);
+					bw.write(key+"\t"+ s);
 					bw.newLine();
 					
 				}
@@ -245,7 +247,7 @@ public class Board {
 				if(high == null){
 					break;
 				}
-				String [] splitted = high.split(" ");
+				String [] splitted = high.split("\t");
 				ArrayList<Integer> list = new ArrayList<>();
 				for(int i = 1;i<splitted.length;i++){
 					list.add(Integer.parseInt(splitted[i]));

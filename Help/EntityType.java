@@ -4,7 +4,7 @@ import Bot.BotImpl.MasterSquirrelBot;
 import Bot.BotImpl.MiniSquirrelBot;
 import Entities.*;
 import javafx.scene.paint.Color;
-import Bot.BotImpl.BastiBot;
+import Bot.BotImpl.BastiSquirrelBot;
 
 
 public enum EntityType {
@@ -68,7 +68,7 @@ public enum EntityType {
 	            else if(entity.getClass() == MiniSquirrelBot.class)
 	            {
 	                return MiniSquirrelBot;
-	            }else if(entity.getClass() == BastiBot.class){
+	            }else if(entity.getClass() == BastiSquirrelBot.class){
 	            	return BastiBot;
 	            }
 

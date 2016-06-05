@@ -1,5 +1,6 @@
-1
+2
 Bot.BotImpl.MasterSquirrelBot
 1000
-
+Bot.BotImpl.BastiSquirrelBot
+1000
 
