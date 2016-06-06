@@ -94,7 +94,7 @@ public class Board {
 	private void setStart(){
 		FileReader fr;
 		try {
-			fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/config.txt");
+			fr = new FileReader("Board/config.txt");
 			BufferedReader br = new BufferedReader(fr);
 			while(true){
 				String high = br.readLine();
@@ -122,12 +122,13 @@ public class Board {
 		} catch (IOException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			container.clear();
 			setStartEntities();
+			setBots();
+			setPlayer();
 			System.err.println("Irgendwas doofes ist in Config_Start: passiert :/");
 			e.printStackTrace();
 		}
 	}
-	
-	
+		
 	private void setWalls(){
 		for(int x = 0; x < config.Size.getX(); x++){
 			container.add(new Wall(getNewID(),new XY(x,0)));
