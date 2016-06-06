@@ -94,7 +94,7 @@ public class Board {
 	private void setStart(){
 		FileReader fr;
 		try {
-			fr = new FileReader("Board/config.txt");
+			fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/config.txt");
 			BufferedReader br = new BufferedReader(fr);
 			while(true){
 				String high = br.readLine();
@@ -221,8 +221,6 @@ public class Board {
 
 	}
 	
-	
-	
 
 	public void setNewHighscore(){
 		FileWriter fw;
@@ -256,7 +254,7 @@ public class Board {
 			}
 			bw.close();
 		} catch (IOException e1) {
-			System.err.println("Datei konnte nicht erstellt werden");
+			System.err.println("Datei wurde nicht gefunden werden");
 			for(int i = 0; i<container.size();i++){
 				if(container.get(i) instanceof MasterSquirrel){
 					String key = container.get(i).getClass().getName();
