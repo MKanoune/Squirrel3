@@ -1,7 +1,9 @@
 package Core.Board;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -60,6 +62,7 @@ public class Board {
 			try {
 				if(r>=rounds){
 					setNewHighscore();
+					openHighscore();
 					System.exit(0);
 				}
 				Thread.sleep(10000);
@@ -307,6 +310,24 @@ public class Board {
 	public void printHighScore(){
 		//logger.log(Level.INFO, Highscore.toString());
 		System.out.println(Highscore);
+	}
+	
+	public void openHighscore(){
+        File file = new File("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
+         
+        if(!Desktop.isDesktopSupported()){
+            System.out.println("Desktop is not supported");
+            return;
+        }
+         
+        Desktop desktop = Desktop.getDesktop();
+        if(file.exists())
+			try {
+				desktop.open(file);
+			} catch (IOException e) {
+				System.err.println("can not open Highscore.txt");
+				e.printStackTrace();
+			}
 	}
 	
 	public FlattenedBoard flatten(){
