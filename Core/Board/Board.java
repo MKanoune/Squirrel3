@@ -8,15 +8,24 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
+import com.sun.javafx.css.StyleCacheEntry.Key;
+
+import Bot.BotControllerFactory;
+import Bot.ControllerFactory;
+import Bot.BotImpl.MasterSquirrelBot;
 import Bot.BotImpl.MiniSquirrelBot.ControllerContextImplMini;
 import Entities.BadBeast;
 import Entities.BadPlant;
@@ -27,50 +36,59 @@ import Entities.GuidedMasterSquirrel;
 import Entities.MasterSquirrel;
 import Entities.Wall;
 import Help.XY;
+import Scanner.CommandTypeMethods;
 
 public class Board {
 	BoardConfig config;
-	Map<String, ArrayList<Integer>> Highscore = new HashMap<>();//arraylist
+	Map<String, ArrayList<Integer>> Highscore = new HashMap<>();
 	ArrayList<Entity> container; 
 	private static int recentID;
 	public Logger logger = Logger.getLogger(ControllerContextImplMini.class.getName());
 	GuidedMasterSquirrel master;
-	int rounds = 2;
-	int r = 1;
+	protected int duration;
+	private int rounds = 0;
+	String result = "";
+	
 	
 	
 	public Board(){
 		this.config = new BoardConfig();
+		this.duration=config.standardDuration;
 		container = new ArrayList<Entity>();
-		setStart();
 		getHighscore();
+		setStartProperty();
+		//setStartEntities();
+		setPlayer();
+		setBots();
+		
 	}
+	
 	
 	
 	public XY getSize(){
-		return config.Size;
+		return config.getSize();
 	}
 	
 	public void update(){
-		config.duration--;
-		System.out.println(config.duration);
+		duration--;
+		System.out.println(duration);
 		for(int i = 0;i<container.size();i++){
 			container.get(i).nextStep(flatten());
 		}
-		if(config.duration == 0){
+		if(duration == 0){
 			System.out.println("Zwischenstand: "+Highscore);
 			try {
-				if(r>=rounds){
+				if(rounds>=config.rounds){
 					setNewHighscore();
 					openHighscore();
 					System.exit(0);
 				}
 				Thread.sleep(10000);
-				config.duration = config.standardDuration;
+				duration=config.standardDuration;
 				deleteStartEntitys();
 				setStartEntities();
-				r++;
-				System.out.println("----Runde "+r+"!!----");
+				rounds++;
+				System.out.println("----Runde "+rounds+"!!----");
 			}catch (InterruptedException e) {
 				System.out.println("Irgendwas doofes ist passiert :/");
 				e.printStackTrace();
@@ -81,7 +99,7 @@ public class Board {
 	
 	@Override
 	public String toString(){
-		 String out = "Size: " + config.Size.getX()*config.Size.getY() + " Entitys: " + config.getEntityCount(); 
+		 String out = "Size: " + config.getSize().getX()*config.getSize().getY(); 
 		 return out;
 	 }
 	
@@ -97,7 +115,7 @@ public class Board {
 	private void setStart(){
 		FileReader fr;
 		try {
-			fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/config.txt");
+			fr = new FileReader(getDir()+"/src/Core/Board/config.txt");
 			BufferedReader br = new BufferedReader(fr);
 			while(true){
 				String high = br.readLine();
@@ -107,7 +125,7 @@ public class Board {
 			}
 			String size = br.readLine();
 			String[] splitt = size.split("#");
-			config.Size = new XY(Integer.parseInt(splitt[1]),Integer.parseInt(splitt[2]));
+			config.setSize(new XY(Integer.parseInt(splitt[1]),Integer.parseInt(splitt[2])));
 			setWalls();
 			for(int e = 0; e<4;e++){
 				String count = br.readLine();
@@ -119,94 +137,101 @@ public class Board {
 				}
 			}
 			br.close();
-			setPlayer();
-			setBots();
 			
 		} catch (IOException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			container.clear();
 			setStartEntities();
-			setBots();
-			setPlayer();
 			System.err.println("Irgendwas doofes ist in Config_Start: passiert :/");
 			e.printStackTrace();
 		}
 	}
 		
 	private void setWalls(){
-		for(int x = 0; x < config.Size.getX(); x++){
+		for(int x = 0; x < config.getSize().getX(); x++){
 			container.add(new Wall(getNewID(),new XY(x,0)));
 		}
-		for(int x = 0; x < config.Size.getX(); x++){
-			container.add(new Wall(getNewID(),new XY(x,config.Size.getY()-1)));
+		for(int x = 0; x < config.getSize().getX(); x++){
+			container.add(new Wall(getNewID(),new XY(x,config.getSize().getY()-1)));
 		}
-		for(int y = 1; y < config.Size.getY()-1; y++){
+		for(int y = 1; y < config.getSize().getY()-1; y++){
 			container.add(new Wall(getNewID(),new XY(0,y)));
 		}
-		for(int y = 1; y < config.Size.getY()-1; y++){
-			container.add(new Wall(getNewID(),new XY(config.Size.getX()-1,y)));
+		for(int y = 1; y < config.getSize().getY()-1; y++){
+			container.add(new Wall(getNewID(),new XY(config.getSize().getX()-1,y)));
 		}
 	}
 	
 	private void setStartEntities(){
 		setWalls();
-		for (int i = 0; i < config.badPlantCount; i++){
+		for (int i = 0; i < config.getBadPlantCount(); i++){
 			container.add(new BadPlant(getNewID(),rndmPos()));
 		}
-		for (int i = 0; i < config.goodPlantCount; i++){
+		for (int i = 0; i < config.getGoodPlantCount(); i++){
 			container.add(new GoodPlant(getNewID(),rndmPos()));
 		}
-		for (int i = 0; i < config.badBeastCount; i++){
+		for (int i = 0; i < config.getBadBeastCount(); i++){
 			container.add(new BadBeast(getNewID(),rndmPos()));
     	}
-		for (int i = 0; i < config.goodBeastCount; i++){
+		for (int i = 0; i < config.getGoodBeastCount(); i++){
 			container.add(new GoodBeast(getNewID(),rndmPos()));
     	}
-		for(int i = 0; i < config.wallCount2; i++){
+		for(int i = 0; i < config.getWallCount2(); i++){
 			container.add(new Wall(getNewID(),rndmPos()));
 		}
 		
 	}
 	
 	public void setBots(){
-		try {
-			FileReader fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/config.txt");
-			BufferedReader br = new BufferedReader(fr);
-				try {
-					br.readLine();
-					String bCount = br.readLine();
-					String[]s = bCount.split("#");
-					int botCount = Integer.parseInt(s[1]);
-					config.setBotCount(botCount);
-					for(int i = 0; i < config.botCount;i++){
-						Class<?> cl = Class.forName(br.readLine());
-						Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
-						container.add((Entity) constructor.newInstance(getNewID(),rndmPos(),Integer.parseInt(br.readLine())));
-					}
-					br.close();
-				}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
-					System.out.println("Class not found");
-					e.printStackTrace();
-				}
-
-				}catch (FileNotFoundException g) {
-					try {
-						for(int i = 0; i < config.botCount;i++){
-							Class<?> cl = Class.forName(config.Bots[i]);
-							Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
-							container.add((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[0]));
-							g.printStackTrace();
-						}
-					}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException d) {
-						System.out.println("Class not found");
-						d.printStackTrace();
-					}
-						
-				}
-				
+		for(int i = 0; i < config.botCount;i++){
+			Class<?> cl;
+			try {
+				cl = Class.forName(config.Bots[i]);
+				BotControllerFactory instance = (BotControllerFactory) cl.newInstance();
+				container.add(new MasterSquirrelBot(getNewID(), rndmPos(),instance));
+			} catch ( SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | ClassNotFoundException e) {
+				System.out.println(e);
+				e.printStackTrace();
+			}
+		}
+		
+//		try {
+//			FileReader fr = new FileReader(getDir()+"/src/Core/Board/config.txt");
+//			BufferedReader br = new BufferedReader(fr);
+//				try {
+//					br.readLine();
+//					String bCount = br.readLine();
+//					String[]s = bCount.split("#");
+//					int botCount = Integer.parseInt(s[1]);
+//					config.setBotCount(botCount);
+//					for(int i = 0; i < config.botCount;i++){
+//						Class<?> cl = Class.forName(br.readLine());
+//						Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
+//						container.add((Entity) constructor.newInstance(getNewID(),rndmPos(),Integer.parseInt(br.readLine())));
+//					}
+//					br.close();
+//				}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
+//					System.out.println("Class not found");
+//					e.printStackTrace();
+//				}
+//
+//				}catch (FileNotFoundException g) {
+//					try {
+//						for(int i = 0; i < config.botCount;i++){
+//							Class<?> cl = Class.forName(config.Bots[i]);
+//							Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
+//							container.add((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[0]));
+//							g.printStackTrace();
+//						}
+//					}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException d) {
+//						System.out.println("Class not found");
+//						d.printStackTrace();
+//					}
+//						
+//				}
+//				
 			
 	}
 
-	
 	public void setPlayer(){
 		if(config.playerMode){
 			master = new GuidedMasterSquirrel(getNewID(),rndmPos()); 
@@ -228,7 +253,7 @@ public class Board {
 	public void setNewHighscore(){
 		FileWriter fw;
 		try {
-			fw = new FileWriter("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
+			fw = new FileWriter(getDir()+"/src/Core/Board/Highscore.txt");
 			BufferedWriter bw = new BufferedWriter(fw);
 			for(int i = 0; i<container.size();i++){
 				if(container.get(i) instanceof MasterSquirrel){
@@ -275,13 +300,11 @@ public class Board {
 		
 	}
 	
-	
-	
 
 	public void getHighscore(){
 		FileReader fr;
 		try {
-			fr = new FileReader("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
+			fr = new FileReader(getDir()+"/src/Core/Board/Highscore.txt");
 			BufferedReader br = new BufferedReader(fr);
 			while(true){
 				String high = br.readLine();
@@ -313,7 +336,7 @@ public class Board {
 	}
 	
 	public void openHighscore(){
-        File file = new File("C:/Users/basti_000/workspace/Squirrel/src/Core/Board/Highscore.txt");
+        File file = new File(getDir()+"/src/Core/Board/Highscore.txt");
          
         if(!Desktop.isDesktopSupported()){
             System.out.println("Desktop is not supported");
@@ -340,7 +363,7 @@ public class Board {
 	}
 	
 	public XY rndmPos(){
-		XY pos = XY.rndmXY(config.Size.getX(),config.Size.getY());
+		XY pos = XY.rndmXY(config.getSize().getX(),config.getSize().getY());
 		if(!isPositionEmpty(pos)){
 			pos = rndmPos();
 		}
@@ -355,6 +378,67 @@ public class Board {
 		return master;
 	}
 	
+	
+	
+	public void setStartProperty(){
+		InputStream inputStream;
+		try{
+			Properties props = new Properties();
+			String propFileName = "config.properties";
+			
+		
+		
+			inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+		
+			if(inputStream != null){
+				props.load(inputStream);
+			}else{
+				System.err.println("Properties not found!");
+				this.config = new BoardConfig();
+				setStartEntities();
+				return;
+			}
+			
+//			int x = Integer.parseInt(props.getProperty("xValue"));
+//			int y = Integer.parseInt(props.getProperty("yValue"));
+//			config.setSize ( new XY(x,y));
+//			int badBeastCount = Integer.parseInt(props.getProperty("Entities.BadBeast"));
+//			int goodBeastCount = Integer.parseInt(props.getProperty("Entities.GoodBeast"));
+//			int goodPlantCount = Integer.parseInt(props.getProperty("Entities.BadPlant"));
+//			int badPlantCount = Integer.parseInt(props.getProperty("Entities.GoodPlant"));
+//			config.setBadBeastCount(badBeastCount);
+//			config.setBadPlantCount(badPlantCount);
+//			config.setGoodBeastCount(goodBeastCount);
+//			config.setGoodPlantCount(goodPlantCount);
+			
+//			String bot1=props.getProperty("bot1");
+//			String bot2=props.getProperty("bot2");
+//			int botCount =  Integer.parseInt(props.getProperty("botcount"));
+//			config.botCount=botCount;
+//			config.Bots[0]=bot1;
+//			config.Bots[1]=bot2;
+//			config.playerMode=Boolean.parseBoolean("playerMode");
+//			
+			
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("Exception: " + e);
+			container.clear();
+			setStartEntities();
+		} finally {
+			
+			
+		}
+			
+	}
+	
+	public String getDir(){
+		String dir = System.getProperty("user.dir");
+		dir = dir.replace('\\', '/');
+		return dir;
+	}
 	
 //	public void setHighscore(){
 //	try{
@@ -423,6 +507,67 @@ public class Board {
 //	}
 //	
 //}
+	
+//--------------------------------------
+//	try {
+//		FileReader fr = new FileReader(getDir()+"/src/Core/Board/config.txt");
+//		BufferedReader br = new BufferedReader(fr);
+//			try {
+//				br.readLine();
+//				String bCount = br.readLine();
+//				String[]s = bCount.split("#");
+//				int botCount = Integer.parseInt(s[1]);
+//				config.setBotCount(botCount);
+//				for(int i = 0; i < config.botCount;i++){
+//					Class<?> cl = Class.forName(br.readLine());
+//					Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
+//					container.add((Entity) constructor.newInstance(getNewID(),rndmPos(),Integer.parseInt(br.readLine())));
+//				}
+//				br.close();
+//			}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
+//				System.out.println("Class not found");
+//				e.printStackTrace();
+//			}
+//
+//			}catch (FileNotFoundException g) {
+//				try {
+//					for(int i = 0; i < config.botCount;i++){
+//						Class<?> cl = Class.forName(config.Bots[i]);
+//						Constructor<?> constructor = cl.getConstructor(int.class,XY.class,int.class);
+//						container.add((Entity) constructor.newInstance(getNewID(),rndmPos(),config.energy[0]));
+//						g.printStackTrace();
+//					}
+//				}catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException d) {
+//					System.out.println("Class not found");
+//					d.printStackTrace();
+//				}
+//					
+//			}
+			
+
+	
+	
+//	Enumeration<?> keys = props.keys();
+//	while(keys.hasMoreElements()){
+//		String key = (String) keys.nextElement();
+//		String value = props.getProperty(key);
+//		if(key.startsWith("Entities.")){
+//			
+//			for(int i = 0; i < Integer.parseInt(value);i++){
+//				Class<?> cl = Class.forName(key);
+//				Constructor<?> constructor = cl.getConstructor(int.class,XY.class);
+//				container.add((Entity) constructor.newInstance(getNewID(),rndmPos()));
+//			}
+//		}
+//	}
+//	setWalls();
+//	while(keys.hasMoreElements()){
+//		String key = (String) keys.nextElement();
+//		int value = Integer.parseInt(props.getProperty(key));
+//		Class<?> cl = Class.forName("Core.Board.BoardConfig");
+//		Method method = cl.getDeclaredMethod("set"+key,int.class);
+//		method.invoke(new BoardConfig(), value);
+//	}
 
 
 }

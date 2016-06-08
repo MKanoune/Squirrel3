@@ -1,14 +1,12 @@
 package Bot;
 
-import Bot.BotImpl.MasterSquirrelBot;
-import Bot.BotImpl.MiniSquirrelBot;
 import Bot.BotImpl.masterBotController;
 import Bot.BotImpl.miniBotController;
 
-public class ControllerFactory implements BotControllerFactory{
-
-	public ControllerFactory() {
-		// TODO Auto-generated constructor stub
+public class BastiControllerFactory implements BotControllerFactory {
+	
+	public BastiControllerFactory(){
+		
 	}
 	
 	@Override
@@ -22,5 +20,4 @@ public class ControllerFactory implements BotControllerFactory{
 		BotController controller = new miniBotController();
 		return controller;
 	}
-
 }

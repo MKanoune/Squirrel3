@@ -36,7 +36,7 @@ public class Launcher extends Application{
 	static Game game;
 	
     public static void main(String[] args) throws ScanException, IOException, InterruptedException{	
-    	 System.setProperty("java.util.logging.config.file", "logging.properties");
+    	// System.setProperty("java.util.logging.config.file", "logging.properties");
          try{LogManager.getLogManager().readConfiguration();}
          catch ( Exception e ) { e.printStackTrace(); }
 

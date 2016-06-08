@@ -24,7 +24,7 @@ public class FlattenedBoard implements BoardView, EntityContext {
 	
 	public FlattenedBoard(Board board) {
 		this.board = board;
-		this.Size = board.config.Size;
+		this.Size = board.config.getSize();
 		cells = new Entity [this.Size.getY()][this.Size.getX()];
 		for(int i = 0; i < board.container.size(); i++){
 			cells[board.container.get(i).xy.getY()][board.container.get(i).xy.getX()]=board.container.get(i);
@@ -34,7 +34,7 @@ public class FlattenedBoard implements BoardView, EntityContext {
 	
 	@Override//BoardView
 	public XY getSize() {
-		return this.board.config.Size;
+		return this.board.config.getSize();
 	}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -429,7 +429,7 @@ public class FlattenedBoard implements BoardView, EntityContext {
 
 	@Override
 	public int getDuration() {
-		return board.config.duration;
+		return board.duration;
 	}
 	
 

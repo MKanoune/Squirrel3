@@ -18,12 +18,10 @@ public class MasterSquirrelBot extends MasterSquirrel {
 	private int moveCount;
 	
 	
-	public MasterSquirrelBot(int id, XY xy) {
+	public MasterSquirrelBot(int id, XY xy,BotControllerFactory factory) {
 		super(id,1000, xy);
-		ControllerFactory factory = new ControllerFactory();
 		BotController controller = factory.createMasterBotController();
 		this.controller = controller;
-		moveCount = 3;
 	}
 	
 	
