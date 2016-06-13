@@ -271,32 +271,32 @@ public class Board {
 		try {
 			fw = new FileWriter(getDir()+"/src/Core/Board/Highscore.txt");
 			BufferedWriter bw = new BufferedWriter(fw);
-		for(int i = 0; i<container.size();i++){
-			if(container.get(i) instanceof MasterSquirrel){
-				String key = container.get(i).getClass().getName();
-				Integer newHigh = container.get(i).getEnergy();
+			for(int i = 0; i<container.size();i++){
+				if(container.get(i) instanceof MasterSquirrel){
+					String key = container.get(i).getClass().getName();
+					Integer newHigh = container.get(i).getEnergy();
 			
-				if(Highscore.get(key)==null){
-					ArrayList<Integer> list = new ArrayList<>();
-					list.add(newHigh);
-					Highscore.put(key, list);
-				}else{
-					Highscore.get(key).add(newHigh);
-					Collections.sort(Highscore.get(key));
-					Collections.reverse(Highscore.get(key));
+					if(Highscore.get(key)==null){
+						ArrayList<Integer> list = new ArrayList<>();
+						list.add(newHigh);
+						Highscore.put(key, list);
+					}else{
+						Highscore.get(key).add(newHigh);
+						Collections.sort(Highscore.get(key));
+						Collections.reverse(Highscore.get(key));
 					
-				}
+					}
 			
-			String s = "";
-			for(int j = 0;j < Highscore.get(key).size(); j++){
-				s += Highscore.get(key).get(j);
-				s += "\t";
+					String s = "";
+					for(int j = 0;j < Highscore.get(key).size(); j++){
+						s += Highscore.get(key).get(j);
+						s += "\t";
+					}
+					bw.write(key+"\t"+ s);
+					bw.newLine();
+				}	
+				bw.flush();
 			}
-			bw.write(key+"\t"+ s);
-			bw.newLine();
-			}	
-			bw.flush();
-		}
 		}catch(IOException e1) {
 			System.err.println("Datei wurde nicht gefunden werden");
 		}
