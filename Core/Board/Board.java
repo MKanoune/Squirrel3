@@ -81,7 +81,7 @@ public class Board {
 					openHighscore();
 					System.exit(0);
 				}
-				Thread.sleep(10000);
+				Thread.sleep(5000);
 				duration=config.getStandardDuration();
 				deleteStartEntitys();
 				setStartEntities();
@@ -261,7 +261,7 @@ public class Board {
 				}
 				
 			}
-			e1.printStackTrace();
+			
 		}
 		
 	}
@@ -286,19 +286,21 @@ public class Board {
 						Collections.reverse(Highscore.get(key));
 					
 					}
-			
+					
 					String s = "";
 					for(int j = 0;j < Highscore.get(key).size(); j++){
 						s += Highscore.get(key).get(j);
 						s += "\t";
 					}
-					bw.write(key+"\t"+ s);
+					bw.write(key+"\t" + s);
 					bw.newLine();
+					
 				}	
-				bw.flush();
+				
 			}
+			bw.close();
 		}catch(IOException e1) {
-			System.err.println("Datei wurde nicht gefunden werden");
+			System.err.println("err Highscore2");
 		}
 		
 	}
@@ -327,7 +329,6 @@ public class Board {
 			
 		} catch (IOException e) {
 			System.err.println("Kein bisheriger Highscore vorhanden");
-			e.printStackTrace();
 		}
 		
 		
