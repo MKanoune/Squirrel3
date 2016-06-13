@@ -53,7 +53,7 @@ public class Board {
 	
 	public Board(){
 		this.config = new BoardConfig();
-		this.duration=config.standardDuration;
+		this.duration=config.getStandardDuration();
 		container = new ArrayList<Entity>();
 		//getHighscore();
 		//setStartProperty();
@@ -78,13 +78,13 @@ public class Board {
 		if(duration == 0){
 			System.out.println("Zwischenstand: "+Highscore);
 			try {
-				if(rounds>=config.rounds){
+				if(rounds>=config.getRounds()){
 					setNewHighscore();
 					openHighscore();
 					System.exit(0);
 				}
 				Thread.sleep(10000);
-				duration=config.standardDuration;
+				duration=config.getStandardDuration();
 				deleteStartEntitys();
 				setStartEntities();
 				rounds++;

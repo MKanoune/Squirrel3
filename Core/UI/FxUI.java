@@ -27,6 +27,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.Scene;
 
 public class FxUI extends Scene implements UI {
@@ -50,16 +51,16 @@ public class FxUI extends Scene implements UI {
 	public static FxUI createInstance(XY boardSize){
 			Canvas boardCanvas = new Canvas(boardSize.getX()*CELL_SIZE,boardSize.getY()*CELL_SIZE);
 			Label statusLabel = new Label();
-			Label stepLabel = new Label();
+			
 			Button button = new Button("MINI");
 	        VBox top = new VBox();
 	        top.getChildren().add(button);
 	        top.getChildren().add(boardCanvas);
 	        top.getChildren().add(statusLabel);
-	        top.getChildren().add(stepLabel);
+	        
 	        
 	        statusLabel.setText("hello world!");
-	        stepLabel.setText("Steps:");
+	       
 	        
 	        final FxUI fxUI = new FxUI(top, boardCanvas, statusLabel); 
 	        
@@ -112,6 +113,7 @@ public class FxUI extends Scene implements UI {
 			}
 		});
 	}
+	
 	public void repaintBoardCanvas(BoardView view){
 		GraphicsContext gc = boardCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, boardCanvas.getWidth(), boardCanvas.getHeight());
@@ -140,6 +142,10 @@ public class FxUI extends Scene implements UI {
         	yCord=0;
         	xCord+=CELL_SIZE;
         }
+        gc.setFill(Color.RED);
+        gc.fillText(String.valueOf(view.getDuration()), 0.25*CELL_SIZE,0.65*CELL_SIZE);
+        
+        
 	}
 	
 	 public void message(final String msg){

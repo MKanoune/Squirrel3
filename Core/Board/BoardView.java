@@ -13,4 +13,7 @@ public interface BoardView {
 	
 	public int getEnergy(int x, int y);
 
+	public int getDuration();
+	
+
 }

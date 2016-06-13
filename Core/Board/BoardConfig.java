@@ -17,8 +17,7 @@ public final class BoardConfig {
     protected int [] energy = {1000,2000};
     protected String []Bots = {"Bot.ControllerFactory","Bot.ControllerFactory"};
     protected int botCount = 2;
-    protected final int standardDuration = 50;
-    public int rounds = 2;
+    
     
     
     
@@ -38,7 +37,9 @@ public final class BoardConfig {
     	values.put("goodPlantCount", 5);
     	values.put("badPlantCount", 5);
     	values.put("playerMode", 1);
-    	
+    	values.put("standardDuration", 50);
+    	values.put("rounds", 2);
+    	values.put("standardDuration", 50);
     }
    
     
@@ -175,5 +176,15 @@ public final class BoardConfig {
 		}
 		
 	}
+
+	public int getRounds() {
+		return values.get("rounds");
+	}
+
+	public int getStandardDuration() {
+		return values.get("standardDuration");
+	}
+
+
 
 }
