@@ -55,9 +55,9 @@ public class Board {
 		this.config = new BoardConfig();
 		this.duration=config.standardDuration;
 		container = new ArrayList<Entity>();
-		getHighscore();
-		setStartProperty();
-		//setStartEntities();
+		//getHighscore();
+		//setStartProperty();
+		setStartEntities();
 		setPlayer();
 		setBots();
 		
@@ -233,7 +233,7 @@ public class Board {
 	}
 
 	public void setPlayer(){
-		if(config.playerMode){
+		if(config.isPlayerMode()){
 			master = new GuidedMasterSquirrel(getNewID(),rndmPos()); 
 			insert(master);
 		}
@@ -434,7 +434,7 @@ public class Board {
 			
 	}
 	
-	public String getDir(){
+	public static String getDir(){
 		String dir = System.getProperty("user.dir");
 		dir = dir.replace('\\', '/');
 		return dir;
