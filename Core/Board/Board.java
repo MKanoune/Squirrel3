@@ -55,8 +55,7 @@ public class Board {
 		this.config = new BoardConfig();
 		this.duration=config.getStandardDuration();
 		container = new ArrayList<Entity>();
-		//getHighscore();
-		//setStartProperty();
+		getHighscore();
 		setStartEntities();
 		setPlayer();
 		setBots();
@@ -76,10 +75,9 @@ public class Board {
 			container.get(i).nextStep(flatten());
 		}
 		if(duration == 0){
-			System.out.println("Zwischenstand: "+Highscore);
 			try {
 				if(rounds>=config.getRounds()){
-					setNewHighscore();
+					setNewHighscore2();
 					openHighscore();
 					System.exit(0);
 				}
@@ -112,39 +110,7 @@ public class Board {
 	}
 	
 	
-	private void setStart(){
-		FileReader fr;
-		try {
-			fr = new FileReader(getDir()+"/src/Core/Board/config.txt");
-			BufferedReader br = new BufferedReader(fr);
-			while(true){
-				String high = br.readLine();
-				if(high.equals("Start:")){
-					break;
-				}
-			}
-			String size = br.readLine();
-			String[] splitt = size.split("#");
-			config.setSize(new XY(Integer.parseInt(splitt[1]),Integer.parseInt(splitt[2])));
-			setWalls();
-			for(int e = 0; e<4;e++){
-				String count = br.readLine();
-				String[] spl = count.split("#");
-				for(int i =0;i<Integer.parseInt(spl[1]);i++){
-					Class<?> cl = Class.forName(spl[0]);
-					Constructor<?> constructor = cl.getConstructor(int.class,XY.class);
-					container.add((Entity) constructor.newInstance(getNewID(),rndmPos()));
-				}
-			}
-			br.close();
-			
-		} catch (IOException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			container.clear();
-			setStartEntities();
-			System.err.println("Irgendwas doofes ist in Config_Start: passiert :/");
-			e.printStackTrace();
-		}
-	}
+	
 		
 	private void setWalls(){
 		for(int x = 0; x < config.getSize().getX(); x++){
@@ -258,21 +224,20 @@ public class Board {
 			for(int i = 0; i<container.size();i++){
 				if(container.get(i) instanceof MasterSquirrel){
 					String key = container.get(i).getClass().getName();
-					Integer highscore = container.get(i).getEnergy();
-					ArrayList<Integer> l = new ArrayList<>();
+					Integer newHigh = container.get(i).getEnergy();
+					
 					if(Highscore.get(key)==null){
-						l.add(highscore);
+						ArrayList<Integer> l = new ArrayList<>();
+						l.add(newHigh);
 						Highscore.put(key, l);
 					}else{
-						l = Highscore.get(key);
-						l.add(highscore);
-						Collections.sort(l);
-						Collections.reverse(l);
-						Highscore.put(key, l);
+						Highscore.get(key).add(newHigh);
+						Collections.sort(Highscore.get(key));
+						Collections.reverse(Highscore.get(key));
 					}
 					String s = "";
-					for(int j=0;j<l.size();j++){
-						s += l.get(j);
+					for(int j=0;j<Highscore.get(key).size();j++){
+						s += Highscore.get(key).get(j);
 						s += "\t";
 					}
 					bw.write(key+"\t"+ s);
@@ -294,11 +259,50 @@ public class Board {
 					l.add(highscore);
 					Highscore.put(key,l);
 				}
+				
 			}
 			e1.printStackTrace();
 		}
 		
 	}
+	
+	public void setNewHighscore2(){
+		FileWriter fw;
+		try {
+			fw = new FileWriter(getDir()+"/src/Core/Board/Highscore.txt");
+			BufferedWriter bw = new BufferedWriter(fw);
+		for(int i = 0; i<container.size();i++){
+			if(container.get(i) instanceof MasterSquirrel){
+				String key = container.get(i).getClass().getName();
+				Integer newHigh = container.get(i).getEnergy();
+			
+				if(Highscore.get(key)==null){
+					ArrayList<Integer> list = new ArrayList<>();
+					list.add(newHigh);
+					Highscore.put(key, list);
+				}else{
+					Highscore.get(key).add(newHigh);
+					Collections.sort(Highscore.get(key));
+					Collections.reverse(Highscore.get(key));
+					
+				}
+			
+			String s = "";
+			for(int j = 0;j < Highscore.get(key).size(); j++){
+				s += Highscore.get(key).get(j);
+				s += "\t";
+			}
+			bw.write(key+"\t"+ s);
+			bw.newLine();
+			}	
+			bw.flush();
+		}
+		}catch(IOException e1) {
+			System.err.println("Datei wurde nicht gefunden werden");
+		}
+		
+	}
+	
 	
 
 	public void getHighscore(){
@@ -378,6 +382,40 @@ public class Board {
 		return master;
 	}
 	
+	
+	private void setStart(){
+		FileReader fr;
+		try {
+			fr = new FileReader(getDir()+"/src/Core/Board/config.txt");
+			BufferedReader br = new BufferedReader(fr);
+			while(true){
+				String high = br.readLine();
+				if(high.equals("Start:")){
+					break;
+				}
+			}
+			String size = br.readLine();
+			String[] splitt = size.split("#");
+			config.setSize(new XY(Integer.parseInt(splitt[1]),Integer.parseInt(splitt[2])));
+			setWalls();
+			for(int e = 0; e<4;e++){
+				String count = br.readLine();
+				String[] spl = count.split("#");
+				for(int i =0;i<Integer.parseInt(spl[1]);i++){
+					Class<?> cl = Class.forName(spl[0]);
+					Constructor<?> constructor = cl.getConstructor(int.class,XY.class);
+					container.add((Entity) constructor.newInstance(getNewID(),rndmPos()));
+				}
+			}
+			br.close();
+			
+		} catch (IOException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			container.clear();
+			setStartEntities();
+			System.err.println("Irgendwas doofes ist in Config_Start: passiert :/");
+			e.printStackTrace();
+		}
+	}
 	
 	
 	public void setStartProperty(){

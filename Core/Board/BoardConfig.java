@@ -14,9 +14,9 @@ public final class BoardConfig {
 	private XY Size;
 	private int wallCount;
     private int wallCount2 = 0;
-    protected int [] energy = {1000,2000};
-    protected String []Bots = {"Bot.ControllerFactory","Bot.ControllerFactory"};
-    protected int botCount = 2;
+    protected int [] energy = {1000};
+    protected String []Bots = {"Bot.ControllerFactory"};
+    protected int botCount = 1;
     
     
     
